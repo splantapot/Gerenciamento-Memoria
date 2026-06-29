@@ -32,9 +32,12 @@ namespace gerenciamento_memoria {
             InitializeComponent();      // APP Init
             com = new Communication();  // Instance Communication Obj
             RenderPortBox();            // Init setting
+            RenderRadioButton();
             DoConnection();
             //if () MessageBox.Show("Conectado automaticamente!");
         }
+
+
 
         /* ====================================  */
         /* Connection Functions                  */
@@ -259,11 +262,14 @@ namespace gerenciamento_memoria {
                 return;
             }
 
+            UpdateColumnName();
+
             for (int row = 0; row < dataGrid.RowCount; row++) {
                 // ix rhex rdec whex wdec
                 int ix = _getRowIndex(row);
                 try {
-                    dataGrid.Rows[row].Cells[1].Value = raw_ready[ix].ToString("X");    //Hex
+                    string new_formatted_value = radbtnHex.Checked ? raw_ready[ix].ToString("X") : Convert.ToString(raw_ready[ix], 2).PadLeft(8, '0').Insert(4, " "); ;
+                    dataGrid.Rows[row].Cells[1].Value = new_formatted_value;            //Hex or Bin
                     dataGrid.Rows[row].Cells[2].Value = raw_ready[ix];                  //Dec
                 }
                 catch {
@@ -447,6 +453,25 @@ namespace gerenciamento_memoria {
         }
 
         /* ====================================  */
+        /* Render he Radio Butons                */
+        /* ====================================  */
+        private void RenderRadioButton() {
+            if (this.InvokeRequired) {
+                this.Invoke(new Action(() => RenderRadioButton()));
+                return;
+            }
+            radbtnHex.Checked = true;
+        }
+
+        private void UpdateColumnName() {
+            if (this.InvokeRequired) {
+                this.Invoke(new Action(() => UpdateColumnName()));
+                return;
+            }
+            colReadHex.HeaderText = (radbtnHex.Checked) ? "Hex" : "Bin";
+        }
+
+        /* ====================================  */
         /* Utils                                 */
         /* ====================================  */
 
@@ -588,6 +613,14 @@ namespace gerenciamento_memoria {
             finally {
                 DoConnection(comPort); // Reconnect after writing to MSP
             }
+        }
+
+        private void radbtnHex_CheckedChanged(object sender, EventArgs e) {
+            UpdateColumnName();
+        }
+
+        private void radbtnBin_CheckedChanged(object sender, EventArgs e) {
+            UpdateColumnName();
         }
     }
 }

@@ -1,0 +1,2 @@
+Programa que envia e escreve dados da memoria. C# ok e software MSP ok.
+A pasta do MSP "Transmissor_USCIA_TX"já contem um repositorio do git para as versoes.
