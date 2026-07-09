@@ -142,5 +142,18 @@ namespace gerenciamento_memoria {
             System.Threading.Thread.Sleep(1);
             _serialPort.BreakState = false;
         }
+
+        public void WriteCmd(byte cmd, byte qnt_bytes, params byte[] args) {
+            WriteBreak();
+            WriteRaw(cmd);
+            WriteRaw(qnt_bytes);
+            Console.WriteLine($"=== {cmd} : {qnt_bytes} ===");
+            for (int i = 0; i < qnt_bytes; i++) {
+                WriteRaw(args[i]);
+                Console.Write(args[i]);
+                if (i < qnt_bytes - 1) Console.Write(", ");
+            }
+            Console.WriteLine("");
+        }
     }
 }

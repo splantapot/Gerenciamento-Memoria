@@ -189,32 +189,12 @@ namespace gerenciamento_memoria {
             }
         }
 
-        private void WriteCmd(byte cmd, byte address, byte value) {
+        public void WriteCmdToMicro(byte cmd, byte qnt_bytes, params byte[] args) {
             try {
-                com.WriteBreak();
-                com.WriteRaw(cmd);
-                com.WriteRaw(address);
-                com.WriteRaw(value);
-            }
-            catch {
+                com.WriteCmd(cmd, qnt_bytes, args);
+            } catch {
                 MessageBox.Show("Verifique a conexão da porta.");
             }
-        }
-        private void WriteCmd(byte cmd, byte address_low, byte address_high, byte value) {
-            try {
-                com.WriteBreak();
-                com.WriteRaw(cmd);
-                com.WriteRaw(address_low);
-                com.WriteRaw(address_high);
-                com.WriteRaw(value);
-            }
-            catch {
-                MessageBox.Show("Verifique a conexão da porta.");
-            }
-        }
-
-        private void WriteByteInIx(byte raw, byte ix) {
-            WriteCmd(251, ix, raw);
         }
 
         /* ====================================  */
@@ -231,7 +211,7 @@ namespace gerenciamento_memoria {
             if (isUserStr) {
                 //Console.WriteLine($"[USER] {str_ready}");//Console.WriteLine($"[USER] {str_ready}");
                 //if (!str_ready.Contains("\u00FF"))//<<<<<<<<<<<filtra o valor de caracter 255, gerado ao resetar. Resolvi, mas Se AINDA PERSISTIR DESCOMENTE ESTA LINHA
-                    textBoxUserMsg.AppendText(str_ready.Replace("\n", "\r\n"));
+                textBoxUserMsg.AppendText(str_ready.Replace("\n", "\r\n"));
             }
             else {
                 //Console.WriteLine($"[TEXT] {str_ready}");
@@ -330,10 +310,11 @@ namespace gerenciamento_memoria {
             _clearDatagridPaint();
             if (e.ColumnIndex <= 0) return; //blocks for error in edit ix
             int row = e.RowIndex;
-            int ix = _getRowIndex(row);
-            int value = _getRowValue(row);
-            if (value >= 0 && ix >= 0 && ix < 4) {
-                WriteByteInIx((byte)value, (byte)ix);
+            byte index = (byte) _getRowIndex(row);
+            byte value = (byte) _getRowValue(row);
+            if (value >= 0 && index >= 0 && index < 4) {
+                // COMMAND 251: Write value in index from array
+                WriteCmdToMicro(251, 2, index, value);
                 _clearRowWrite(row);
             }
             else {
@@ -358,7 +339,7 @@ namespace gerenciamento_memoria {
             // CMD=190, ix (low), ix(high), value
             var (address, value) = _getSpecialCommandData();
             if (address < 0) return;
-            WriteCmd(190, (byte)(address % 256), (byte)(address >> 8), value);
+            WriteCmdToMicro(190, 3, (byte)(address % 256), (byte)(address >> 8), value);
             AddComandToLog($"BITSET: Add [hex]: {address.ToString("X")} | Bit: {Math.Log(value, 2)}");
         }
 
@@ -367,7 +348,7 @@ namespace gerenciamento_memoria {
             // CMD=191, ix (low), ix(high), value
             var (address, value) = _getSpecialCommandData();
             if (address < 0) return;
-            WriteCmd(191, (byte)(address % 256), (byte)(address >> 8), value);
+            WriteCmdToMicro(191, 3, (byte)(address % 256), (byte)(address >> 8), value);
             AddComandToLog($"BITCLR: Add [hex]: {address.ToString("X")} | Bit: {Math.Log(value, 2)}");
         }
 
@@ -376,7 +357,7 @@ namespace gerenciamento_memoria {
             // CMD=192, ix (low), ix(high), value
             var (address, value) = _getSpecialCommandData();
             if (address < 0) return;
-            WriteCmd(192, (byte)(address % 256), (byte)(address >> 8), value);
+            WriteCmdToMicro(192, 3, (byte)(address % 256), (byte)(address >> 8), value);
             AddComandToLog($"BITINV: Add [hex]: {address.ToString("X")} | Bit: {Math.Log(value, 2)}");
         }
 

@@ -30,10 +30,10 @@ int main(void) {
 	byte vetor_teste[] = {1, 2};//, 3, 4};
 
 	aloc_addr(&P3IN, 1);
-
-		//byte var = 200;
+	//byte var = 200;
 	aloc_addr(&svt, 1);
 	aloc_addr(vetor_teste, sizeof(vetor_teste));
+
 	while (1) {
 		if (passou_tempo(&t)) {//tempo de 1 segundo
 			reseta_temporizador(&t);
