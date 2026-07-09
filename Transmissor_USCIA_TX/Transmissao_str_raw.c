@@ -2,7 +2,7 @@
  implementar um depurador ou pelo menos para visualizar na tela do computador os dados
  na memória */ //C:\Users\evert\workspace_v5_5\Transmissor_USCIA_TX
 #include <msp430.h>
-#include "Temporizador.h"
+#include <Temporizador.h>
 #include <stdlib.h>
 #include <string.h>
 #include "gerenciador_memoria.h"
@@ -14,7 +14,6 @@ void setup_tick(unsigned int tempo_tick); void setup_hardware();
 //==variaveis e funções
 #define tp BIT3 //transistor bc639 de programação //para uso dos pinos RX e TX e gravacao sem precisar mudar a posição nos pinos
 #define tu BIT4 //transistor bc337 de utilização
-
 
 int main(void) {
 	setup_hardware();//watchdog, pinos, etc...
@@ -28,6 +27,13 @@ int main(void) {
 	char cont = 0;//contador para dar uma base de tempo para alternar entre opcoes automaticamente
 	Temporizador t; inicializa_temporizador(100, &t); //5000 ms	//P3OUT = 48;	//Temporizador* temp = (Temporizador* )malloc(sizeof(Temporizador));  	//inicializa_temporizador(10,temp);
 
+	byte vetor_teste[] = {1, 2};//, 3, 4};
+
+	aloc_addr(&P3IN, 1);
+
+		//byte var = 200;
+	aloc_addr(&svt, 1);
+	aloc_addr(vetor_teste, sizeof(vetor_teste));
 	while (1) {
 		if (passou_tempo(&t)) {//tempo de 1 segundo
 			reseta_temporizador(&t);
@@ -104,6 +110,28 @@ void setup_hardware(){
 
 	__bis_SR_register(GIE);
 }
+
+
+/*vetor_ptr = (MEM*)malloc(3*sizeof(MEM));
+	if (vetor_ptr == NULL)
+		imprima_gerenciador("Error_aloc_vetor_memoria\n");
+
+	vetor_qtd = (MEM)malloc(4*sizeof(byte));
+	if (vetor_qtd == NULL)
+		imprima_gerenciador("Error_aloc_qtd\n");
+
+	svt = 4;
+
+	byte vetor_teste[] = {1, 2};//, 3, 4};
+
+	vetor_ptr[0] = &P3IN;
+	vetor_ptr[1] = &svt;
+	vetor_ptr[2] = vetor_teste;
+
+	vetor_qtd[0] = 0;
+	vetor_qtd[1] = 0;
+	vetor_qtd[2] = 1;*/
+			//__disable_interrupt();
 
 /*void func(void);
  unsigned int pece = (unsigned int)func;*/

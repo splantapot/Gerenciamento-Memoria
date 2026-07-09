@@ -2,18 +2,26 @@
 
 #ifndef GERENCIADOR_MEMORIA_H_
 #define GERENCIADOR_MEMORIA_H_
+#include <stdlib.h>
+#define MEM volatile unsigned char*
+#define byte unsigned char
+
 
 extern volatile unsigned int end16; extern volatile unsigned char indice, indice_alto, valor;
-extern volatile unsigned char* vetor_ptr[];// = {&indice, &indice_alto, &P3OUT, &var};// &v4}; //<<<<<<<<<{&P1IN, &P2IN, &P3IN, &v4};
-extern volatile unsigned char* pc;
-extern unsigned char qtd_itens_fila; extern char* fila_msgs[]; //char* paux=  (char*)0xC44C;
-extern unsigned char e, cont, i, imp_user;// P3OUT is 19 in hex
-extern volatile unsigned char break_condicao;
+extern MEM* vetor_ptr;// = {&indice, &indice_alto, &P3OUT, &var};// &v4}; //<<<<<<<<<{&P1IN, &P2IN, &P3IN, &v4};
+extern MEM vetor_qtd;
+extern byte svt;
+extern volatile byte* pc;
+extern byte qtd_itens_fila; extern char* fila_msgs[]; //char* paux=  (char*)0xC44C;
+extern byte e, cont, i, j, imp_user;// P3OUT is 19 in hex
+extern volatile byte break_condicao;
 
 //prototipos de funções
 void imprima_gerenciador(char* ptr_C);
 void imprima_user(char* ptr_C);
-unsigned char escreve_endereco(unsigned char dado);
+unsigned char escreve_endereco(byte dado);
+byte aloc_addr(MEM p, byte tam);///<<<<
+void write_ind(byte indice, byte valor);///<<<<
 
 enum EnumTxEtapas {HEADER, ID, TX_DADOS, FAZ_NADA}; extern enum EnumTxEtapas txEtapa;// = FAZ_NADA;//??static é possiveo?
 

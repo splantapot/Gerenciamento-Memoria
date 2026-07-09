@@ -24,11 +24,14 @@ __interrupt void TIMER1_A1_ISR_HOOK(void){//RTI do timer E421
 					IE2 |= UCA0TXIE;
 					e = 1;
 					txEtapa = HEADER;  //tendo, imprima-a
-				} else if (++cont >= 10) { //momento de ver se é para enviar os RAWs, até que a contagem chegue
-					IE2 |= UCA0TXIE;
-					e = 3;
-					txEtapa = HEADER; //<<<<<<<<<<<i = 1;
-				} //100 ms
+				} else
+					if(svt){//ha dados para mostrar?
+						if (++cont >= 10) { //momento de ver se é para enviar os RAWs, até que a contagem chegue
+							IE2 |= UCA0TXIE;
+							e = 3;
+							txEtapa = HEADER; //<<<<<<<<<<<i = 1;
+						} //100 ms
+					}//if (svt)
 			} //if e == 0
 		}//if imp_ser igual a zero.
 
@@ -52,14 +55,28 @@ __interrupt void USCI0TX_ISR(void){	//1) versão com break;
 			} //pc em zero é o mesmo indicativo de TXie em zero, talvez desnecessário ter que zerar ele
 			else { UCA0TXBUF = *pc++; }//nao, i,e, caracteres ainda a enviar
 			break;
+
 		case 3:
-			UCA0TXBUF = *vetor_ptr[i++];//aponta para o raw e avança o indice i
-			if (i > (4 - 1)) {//enviou todos os raws? /*sizeof(vetor_ptr)>>1)*/
-				i = 0;//0 1 2
-				clear_e_cont_txie_pc;
-				txEtapa = FAZ_NADA;//desnecessario mesmo isto? penso que sim no momento
-			}//se enviou todos os raws
+			if (i < svt ){
+				UCA0TXBUF = vetor_ptr[i][j];//aponta para o raw e avança o indice i
+				if (j >= vetor_qtd[i]){
+					j = 0; i++;
+				} else j++;
+			} else {
+				i = j = 0; clear_e_cont_txie_pc;
+				txEtapa = FAZ_NADA;
+			}//else if i < svt
+
 			break;
+
+			//UCA0TXBUF = *vetor_ptr[i++];//aponta para o raw e avança o indice i
+			//if (i > (4 - 1)) {//enviou todos os raws? /*sizeof(vetor_ptr)>>1)*/
+			//	i = 0;//0 1 2
+			//	clear_e_cont_txie_pc;
+			//	txEtapa = FAZ_NADA;//desnecessario mesmo isto? penso que sim no momento
+			//}//se enviou todos os raws
+			//break;
+
 		}//fim do switch
 		break;
 
@@ -84,6 +101,7 @@ __interrupt void USCI0RX_ISR(void){
 	break_condicao = UCA0STAT & UCBRK;
 	unsigned char dado;	dado = UCA0RXBUF;//leitura do dado recebido na UART RX
 	unsigned char retorno = escreve_endereco(dado);//Se estritamente necessário, escreve no endereço
+	if (retorno == 247) __bic_SR_register_on_exit(LPM0_bits);//só vai se deixar aqui
 
 	//comandos r, s, p: Reset, String TESTE, Pausa a CPU do MSP
 	if (!retorno){//se não estiver ocupada a recepção com o recebimento dos bytes de escrita na memória, receba os comandos do INFERIOR_DIREITO
