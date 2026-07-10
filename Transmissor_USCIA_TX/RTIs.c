@@ -3,8 +3,9 @@
 #define TEMPO_TICK 10000 //resolver essa duplicidade aqui depois
 extern unsigned int tick;//biblioteca temporizador
 
-char* msg = "TESTE\r\n";//DEON //<<<<<<<<<<
-volatile unsigned char cont3 = 0; extern volatile unsigned var;//DEON
+byte cont = 0;//contador de amostragem dos RAWs
+char* msg = "TESTE\r\n";//DEON //<<<<<<<<<<apagar depois
+
 #pragma vector=TIMER1_A1_VECTOR
 __interrupt void TIMER1_A1_ISR_HOOK(void){//RTI do timer E421
 	switch (TA1IV) {
@@ -14,7 +15,7 @@ __interrupt void TIMER1_A1_ISR_HOOK(void){//RTI do timer E421
 
 				if (qtd_itens_fila) {  //se tem item na fila, pega ele
 					pc = fila_msgs[0]; //pega o primeiro elemento. Obs: deixa por enquanto esse warning, pois assim funcionou. /*pc = msg; pc = paux; int x;  = 0;*/
-					unsigned char ite;  //indexador ou iterador
+					byte ite;  //indexador ou iterador
 					for (ite = 0; ite < (qtd_itens_fila - 1); ite++) //deslocamento os ponteiros
 						fila_msgs[ite] = fila_msgs[ite + 1]; //desloca os elementos na fila, caminhando a fila...
 					qtd_itens_fila--;
@@ -35,8 +36,6 @@ __interrupt void TIMER1_A1_ISR_HOOK(void){//RTI do timer E421
 			} //if e == 0
 		}//if imp_ser igual a zero.
 
-		if(++cont3 >= 100){ cont3 = 0;	var ^= 255;}//DEON
-
 		TA1CCR2 += TEMPO_TICK; // timer1 contando até seu máximo de 65535(modo 2)
 		tick++;//obrigatório para que a biblioteca do temporizador funcione
 		break;
@@ -45,6 +44,8 @@ __interrupt void TIMER1_A1_ISR_HOOK(void){//RTI do timer E421
 
 #pragma vector=USCIAB0TX_VECTOR
 __interrupt void USCI0TX_ISR(void){	//1) versão com break;
+	static byte i = 0; static byte j = 0;//indices da matriz esparsa
+
 	switch (txEtapa) {
 	case TX_DADOS:
 		switch (e) {

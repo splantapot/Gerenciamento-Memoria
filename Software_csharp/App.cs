@@ -179,8 +179,8 @@ namespace gerenciamento_memoria {
         // Send Data to Device
         private void WriteText(object sender, EventArgs e) {
             try {
-                string value = textboxCMD.Text;
-                textboxCMD.Clear();
+                string value = textboxRX.Text;
+                textboxRX.Clear();
                 if (!string.IsNullOrEmpty(value)) com.WriteStr(value);
                 AddComandToLog($"Cmd: '{value}'");
             }
@@ -211,20 +211,20 @@ namespace gerenciamento_memoria {
             if (isUserStr) {
                 //Console.WriteLine($"[USER] {str_ready}");//Console.WriteLine($"[USER] {str_ready}");
                 //if (!str_ready.Contains("\u00FF"))//<<<<<<<<<<<filtra o valor de caracter 255, gerado ao resetar. Resolvi, mas Se AINDA PERSISTIR DESCOMENTE ESTA LINHA
-                textBoxUserMsg.AppendText(str_ready.Replace("\n", "\r\n"));
+                textBoxTX.AppendText(str_ready.Replace("\n", "\r\n"));
             }
             else {
                 //Console.WriteLine($"[TEXT] {str_ready}");
-                textBoxMsg.SelectionColor = Color.Black;
+                textboxConsole.SelectionColor = Color.Black;
                 if (str_ready.Contains("ERRO"))//<<<<<<<<<<
-                    textBoxMsg.SelectionColor = Color.Red;
+                    textboxConsole.SelectionColor = Color.Red;
                 else if (str_ready.Contains("Running"))//<<<<<<<<<<
-                    textBoxMsg.SelectionColor = Color.Blue;
+                    textboxConsole.SelectionColor = Color.Blue;
                 else if (str_ready.Contains("Resetado")){
-                    textBoxMsg.SelectionColor = Color.Green;//Console.Beep();
+                    textboxConsole.SelectionColor = Color.Green;//Console.Beep();
                 }
-                textBoxMsg.AppendText(str_ready);
-                textBoxMsg.ScrollToCaret();
+                textboxConsole.AppendText(str_ready);
+                textboxConsole.ScrollToCaret();
             }
         }
 
@@ -329,6 +329,23 @@ namespace gerenciamento_memoria {
         }
 
         /* ====================================  */
+        /* Defaults Commands (Work as special)   */
+        /* ====================================  */
+        private void btnResetPuc_Click(object sender, EventArgs e) {
+            WriteCmdToMicro(245, 0);
+            AddComandToLog($"RESET PUC");
+        }
+        private void btnPause_Click(object sender, EventArgs e) {
+            WriteCmdToMicro(246, 0);
+            AddComandToLog($"PAUSE");
+        }
+
+        private void btnRun_Click(object sender, EventArgs e) {
+            WriteCmdToMicro(247, 0);
+            AddComandToLog($"RUN");
+        }
+
+        /* ====================================  */
         /* Special Commands                      */
         /* ====================================  */
 
@@ -369,7 +386,7 @@ namespace gerenciamento_memoria {
                 this.Invoke(new Action(() => RenderRawBuffer()));
                 return;
             }
-            textBoxUserMsg.Clear();
+            textBoxTX.Clear();
         }
 
         private void btnClearMsg_Click(object sender, EventArgs e) {
@@ -377,7 +394,7 @@ namespace gerenciamento_memoria {
                 this.Invoke(new Action(() => RenderRawBuffer()));
                 return;
             }
-            textBoxMsg.Clear();
+            textboxConsole.Clear();
         }
 
         private void btnClearCMD_Click(object sender, EventArgs e) {

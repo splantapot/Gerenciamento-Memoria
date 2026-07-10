@@ -29,8 +29,7 @@ int main(void) {
 
 	byte vetor_teste[] = {1, 2};//, 3, 4};
 
-	aloc_addr(&P3IN, 1);
-	//byte var = 200;
+	aloc_addr(&P3OUT, 1);
 	aloc_addr(&svt, 1);
 	aloc_addr(vetor_teste, sizeof(vetor_teste));
 
@@ -41,6 +40,7 @@ int main(void) {
 			switch (cont) {
 			case 0:
 				imprima_gerenciador("Ex Timeout\n");
+				vetor_teste[1] = 222;
 				break;
 			case 1:
 				imprima_user("TESTANDO O ENVIO PELA FUNCAO IMPRIMA_USER\n");
@@ -57,6 +57,7 @@ int main(void) {
 			}
 			case 4:
 				 imprima_user("Sou usuario\n");
+				 vetor_teste[1] = 2;
 				 break;
 				/*case 5:
 				 __bis_SR_register(LPM0);//da no mesmo disso __bis_SR_register(LPM0 or GIE);
