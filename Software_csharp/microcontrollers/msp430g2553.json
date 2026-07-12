@@ -1,0 +1,10 @@
+﻿{
+    "name": "MSP430G2553",
+    "description": "The MSP430G2553 is a low-power microcontroller from Texas Instruments, part of the MSP430 family. It features a 16-bit RISC architecture, a variety of peripherals, and is designed for low-power applications.",
+    "modules": [
+        
+    ]
+    "registers": {
+        
+    }
+}

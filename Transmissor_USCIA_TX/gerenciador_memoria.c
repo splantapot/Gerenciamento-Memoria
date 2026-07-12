@@ -41,9 +41,11 @@ byte escreve_endereco(byte dado) {
 					else if (buffer_rx[0] == 191) 	*(byte*)end16 &= ~buffer_rx[2 + 2];//limpar
 					else 							*(byte*)end16 ^= buffer_rx[2 + 2];//inverter
 					break;
-				case 245: WDTCTL = 0; 							break;//Resetar por PUC
-				// case 246: __bis_SR_register_on_exit(LPM0_bits); break;//pausar //pausa a main o //todo Resolver a função PAUSE
+
+				//case 193: aloc_addr((MEM)end16,  buffer_rx[4])
 				case 247: estado = 0; 							return 247;//break;//despausa a main //RUN
+				case 246: __bis_SR_register_on_exit(LPM0_bits); break;//pausar //pausa a main o
+				case 245: WDTCTL = 0; 							break;//Resetar por PUC
 			}//switch buffer_rx[0]
 
 			estado = 0; return 2;//feito? então retorne 2, mas colocando o estado em zero
@@ -84,7 +86,7 @@ byte aloc_addr(MEM p, byte tam){//aloca endereço no vetor_ptr
 		vetor_ptr = p1; vetor_qtd = p2;
 		vetor_ptr[svt] = p; vetor_qtd[svt] = tam - 1;//seria bom verificar o TAM
 		svt++;
-		imprima_gerenciador("AO 4\n");//alocacão ok
+		imprima_gerenciador("ao\n");//alocacão ok
 		//while(e); todo aguarda a transmissao da msg antes de retornar
 		return 1;//sucesso
 	} else {

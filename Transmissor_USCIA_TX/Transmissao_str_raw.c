@@ -1,31 +1,17 @@
-/*teste de envio de dados pela serial para envio de string e dados da memoria para
- implementar um depurador ou pelo menos para visualizar na tela do computador os dados
- na memória */ //C:\Users\evert\workspace_v5_5\Transmissor_USCIA_TX
+//para a versão 1 do Software C:\Users\evert\workspace_v5_5\Transmissor_USCIA_TX
 #include <msp430.h>
 #include <Temporizador.h>
-#include <stdlib.h>
-#include <string.h>
 #include "gerenciador_memoria.h"
-#define TEMPO_TICK 10000 /* 10 mil us = 10 ms*/ //para uso da Biblioteca do TEMPORIZADOR
-unsigned int tick;
-void setup_tick(unsigned int tempo_tick); void setup_hardware();
 
-//====================GERENCIADOR DE MEMORIA=========================================
-//==variaveis e funções
-#define tp BIT3 //transistor bc639 de programação //para uso dos pinos RX e TX e gravacao sem precisar mudar a posição nos pinos
-#define tu BIT4 //transistor bc337 de utilização
+void setup_hardware();
 
 int main(void) {
 	setup_hardware();//watchdog, pinos, etc...
-	/*Temporizador t; apareceu perfeitamente após 10 segundos a mensagem resetado e quando pressionado para resetar também
-	inicializa_temporizador(1000, &t);//
-	while(!passou_tempo(&t));*/
-	//imprima_gerenciador("\n");//<<<<<<para ajudar a filtrar a ruideira 255 no momento de reset
-	imprima_gerenciador("Resetado\n");//<<<<<<
+
+	imprima_gerenciador("Resetado\n");
 	LPM0;//pausa por LPM
 	imprima_gerenciador("Running...\n");
-	char cont = 0;//contador para dar uma base de tempo para alternar entre opcoes automaticamente
-	Temporizador t; inicializa_temporizador(100, &t); //5000 ms	//P3OUT = 48;	//Temporizador* temp = (Temporizador* )malloc(sizeof(Temporizador));  	//inicializa_temporizador(10,temp);
+	Temporizador t; inicializa_temporizador(100, &t);
 
 	byte vetor_teste[] = {1, 2};//, 3, 4};
 
@@ -33,6 +19,7 @@ int main(void) {
 	aloc_addr(&svt, 1);
 	aloc_addr(vetor_teste, sizeof(vetor_teste));
 
+	char cont = 0;//contador para dar uma base de tempo para alternar entre opcoes automaticamente
 	while (1) {
 		if (passou_tempo(&t)) {//tempo de 1 segundo
 			reseta_temporizador(&t);
@@ -51,7 +38,7 @@ int main(void) {
 				break;
 			case 3://bp(0); BREAKPOINT(0)
 			{
-				char v[3] = {1 + 48,'\n','\0'};//vetor de mensagem de ponto de breakpoint
+				char v[3] = {1 + 48,'\n','\0'};//vetor de mensagem de ponto de breakpoint para a versão 2
 				imprima_gerenciador(v);
 				break;
 			}
@@ -59,19 +46,15 @@ int main(void) {
 				 imprima_user("Sou usuario\n");
 				 vetor_teste[1] = 2;
 				 break;
-				/*case 5:
-				 __bis_SR_register(LPM0);//da no mesmo disso __bis_SR_register(LPM0 or GIE);
-				 break;*/
 			}//switch
 			cont++; cont %= 5;
-			//__asm(" NOP");__asm(" NOP");//para marcar a localização
 		} //passou tempo
 	}//while 1
 }//main
 
-
-
 void setup_hardware(){
+	#define tp BIT3 //transistor bc639 de programação //para uso dos pinos RX e TX e gravacao sem precisar mudar a posição nos pinos
+	#define tu BIT4 //transistor bc337 de utilização
 	WDTCTL = WDTPW + WDTHOLD;
 	DCOCTL = 68;
 	BCSCTL1 = 135;  			//calibrado para 1 MHz
@@ -111,69 +94,3 @@ void setup_hardware(){
 
 	__bis_SR_register(GIE);
 }
-
-
-/*vetor_ptr = (MEM*)malloc(3*sizeof(MEM));
-	if (vetor_ptr == NULL)
-		imprima_gerenciador("Error_aloc_vetor_memoria\n");
-
-	vetor_qtd = (MEM)malloc(4*sizeof(byte));
-	if (vetor_qtd == NULL)
-		imprima_gerenciador("Error_aloc_qtd\n");
-
-	svt = 4;
-
-	byte vetor_teste[] = {1, 2};//, 3, 4};
-
-	vetor_ptr[0] = &P3IN;
-	vetor_ptr[1] = &svt;
-	vetor_ptr[2] = vetor_teste;
-
-	vetor_qtd[0] = 0;
-	vetor_qtd[1] = 0;
-	vetor_qtd[2] = 1;*/
-			//__disable_interrupt();
-
-/*void func(void);
- unsigned int pece = (unsigned int)func;*/
-//volatile unsigned int pece;//para saber do valor do PC
-//void pc_to_string(char *str); char buff[5];
-//na main {	//__asm(" MOV R0, &pece");//saber do pc atual => 0xC00A 	//pc_to_string(buff); }
-
-/*void pc_to_string(char *str) {
- unsigned int val = pece; 	int i;
-
- for (i = 0; i < 4; i++) {
- unsigned char nibble = (val >> (12 - 4 * i)) & 0x0F;
-
- if (nibble < 10)
- str[i] = '0' + nibble;
- else
- str[i] = 'A' + (nibble - 10);
- }
-
- str[4] = '\0';
- }*/
-//para depurar uma função?
-//void func(void);
-//unsigned int pc = (unsigned int)func; //pega o endereço do PC da função
-//if ( func =< pc < foo)
-//void foo();
-
-/* Dentro da RTI
- unsigned int *sp;
- sp = (unsigned int *)_get_SP_register();
- unsigned int pc_salvo = *(sp); // ou offset dependendo do compilador
- */
-/*
- * 	//_get_SP_register
- 1. 🔎 Debug e análise de memória
-
- Você pode verificar:
-
- quanto da pilha está sendo usada
- se há risco de stack overflow
- * */
-
-/*IE2 |= UCA0TXIE;                        // Enable USCI_A0 TX interruptUCA0TXBUF = *pc++;//string1[i++]; //triga o tx inicial*/
-

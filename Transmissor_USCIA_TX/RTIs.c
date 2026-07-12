@@ -1,10 +1,9 @@
 #include <msp430.h>//C:\Users\evert\workspace_v5_5\Transmissor_USCIA_TX
+#include <Temporizador.h>
 #include "gerenciador_memoria.h"
-#define TEMPO_TICK 10000 //resolver essa duplicidade aqui depois
-extern unsigned int tick;//biblioteca temporizador
 
-byte cont = 0;//contador de amostragem dos RAWs
 char* msg = "TESTE\r\n";//DEON //<<<<<<<<<<apagar depois
+static byte cont = 0;//contador de amostragem dos RAWs.
 
 #pragma vector=TIMER1_A1_VECTOR
 __interrupt void TIMER1_A1_ISR_HOOK(void){//RTI do timer E421

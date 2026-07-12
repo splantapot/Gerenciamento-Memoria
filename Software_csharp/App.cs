@@ -37,8 +37,6 @@ namespace gerenciamento_memoria {
             //if () MessageBox.Show("Conectado automaticamente!");
         }
 
-
-
         /* ====================================  */
         /* Connection Functions                  */
         /* ====================================  */
@@ -53,7 +51,6 @@ namespace gerenciamento_memoria {
             if (!string.IsNullOrEmpty(port)) {
                 selected_port = port;
             }
-
             if (com.Open(selected_port)) {
                 Console.WriteLine($"Porta [{selected_port}] aberta.");
                 // Prevents error on setting callback to break and read
@@ -86,7 +83,7 @@ namespace gerenciamento_memoria {
 
         // Connect button
         private void btnConnected_Click(object sender, EventArgs e) {
-            string PORT = comboxPorts.SelectedItem.ToString();
+            string PORT = comboxPorts.SelectedItem?.ToString() ?? "";
             DoConnection(PORT);
         }
 
