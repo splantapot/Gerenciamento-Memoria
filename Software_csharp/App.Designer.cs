@@ -40,7 +40,7 @@
             this.labelTX = new System.Windows.Forms.Label();
             this.textBoxTX = new System.Windows.Forms.TextBox();
             this.panelButtons = new System.Windows.Forms.Panel();
-            this.btnAdd4Rows = new System.Windows.Forms.Button();
+            this.btnAddNRows = new System.Windows.Forms.Button();
             this.btnDesconnect = new System.Windows.Forms.Button();
             this.btnConnected = new System.Windows.Forms.Button();
             this.comboxPorts = new System.Windows.Forms.ComboBox();
@@ -70,10 +70,9 @@
             this.btnSendRX = new System.Windows.Forms.Button();
             this.textboxRX = new System.Windows.Forms.TextBox();
             this.labelRX = new System.Windows.Forms.Label();
-            this.comboxMicro = new System.Windows.Forms.ComboBox();
             this.panelConsole = new System.Windows.Forms.Panel();
             this.button1 = new System.Windows.Forms.Button();
-            this.panel1 = new System.Windows.Forms.Panel();
+            this.button2 = new System.Windows.Forms.Button();
             this.panelDatagrid.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitTop)).BeginInit();
             this.splitTop.Panel1.SuspendLayout();
@@ -90,14 +89,13 @@
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.panelConsole.SuspendLayout();
-            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnAddRow
             // 
-            this.btnAddRow.Location = new System.Drawing.Point(83, 5);
+            this.btnAddRow.Location = new System.Drawing.Point(8, 4);
             this.btnAddRow.Name = "btnAddRow";
-            this.btnAddRow.Size = new System.Drawing.Size(105, 30);
+            this.btnAddRow.Size = new System.Drawing.Size(90, 30);
             this.btnAddRow.TabIndex = 1;
             this.btnAddRow.Text = "Adicionar Linha";
             this.btnAddRow.UseVisualStyleBackColor = true;
@@ -120,8 +118,9 @@
             // 
             // splitTop.Panel1
             // 
-            this.splitTop.Panel1.Controls.Add(this.button1);
-            this.splitTop.Panel1.Controls.Add(this.comboxMicro);
+            this.splitTop.Panel1.Controls.Add(this.radbtnBin);
+            this.splitTop.Panel1.Controls.Add(this.radbtnHex);
+            this.splitTop.Panel1.Controls.Add(this.labelExibitionType);
             this.splitTop.Panel1.Controls.Add(this.dataGrid);
             // 
             // splitTop.Panel2
@@ -138,7 +137,7 @@
             // 
             this.labelExibitionType.AutoSize = true;
             this.labelExibitionType.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelExibitionType.Location = new System.Drawing.Point(3, 4);
+            this.labelExibitionType.Location = new System.Drawing.Point(12, 6);
             this.labelExibitionType.Name = "labelExibitionType";
             this.labelExibitionType.Size = new System.Drawing.Size(62, 15);
             this.labelExibitionType.TabIndex = 16;
@@ -148,7 +147,7 @@
             // 
             this.radbtnBin.AutoSize = true;
             this.radbtnBin.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.radbtnBin.Location = new System.Drawing.Point(6, 42);
+            this.radbtnBin.Location = new System.Drawing.Point(128, 7);
             this.radbtnBin.Name = "radbtnBin";
             this.radbtnBin.Size = new System.Drawing.Size(40, 17);
             this.radbtnBin.TabIndex = 11;
@@ -161,7 +160,7 @@
             // 
             this.radbtnHex.AutoSize = true;
             this.radbtnHex.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.radbtnHex.Location = new System.Drawing.Point(6, 22);
+            this.radbtnHex.Location = new System.Drawing.Point(80, 7);
             this.radbtnHex.Name = "radbtnHex";
             this.radbtnHex.Size = new System.Drawing.Size(44, 17);
             this.radbtnHex.TabIndex = 10;
@@ -283,8 +282,9 @@
             // 
             // panelButtons
             // 
-            this.panelButtons.Controls.Add(this.panel1);
-            this.panelButtons.Controls.Add(this.btnAdd4Rows);
+            this.panelButtons.Controls.Add(this.button2);
+            this.panelButtons.Controls.Add(this.button1);
+            this.panelButtons.Controls.Add(this.btnAddNRows);
             this.panelButtons.Controls.Add(this.btnDesconnect);
             this.panelButtons.Controls.Add(this.btnConnected);
             this.panelButtons.Controls.Add(this.btnWriteMSP);
@@ -297,15 +297,15 @@
             this.panelButtons.Size = new System.Drawing.Size(684, 70);
             this.panelButtons.TabIndex = 8;
             // 
-            // btnAdd4Rows
+            // btnAddNRows
             // 
-            this.btnAdd4Rows.Location = new System.Drawing.Point(194, 5);
-            this.btnAdd4Rows.Name = "btnAdd4Rows";
-            this.btnAdd4Rows.Size = new System.Drawing.Size(30, 62);
-            this.btnAdd4Rows.TabIndex = 9;
-            this.btnAdd4Rows.Text = "x4";
-            this.btnAdd4Rows.UseVisualStyleBackColor = true;
-            this.btnAdd4Rows.Click += new System.EventHandler(this.btnAdd4Rows_Click);
+            this.btnAddNRows.Location = new System.Drawing.Point(104, 4);
+            this.btnAddNRows.Name = "btnAddNRows";
+            this.btnAddNRows.Size = new System.Drawing.Size(64, 30);
+            this.btnAddNRows.TabIndex = 9;
+            this.btnAddNRows.Text = "x N";
+            this.btnAddNRows.UseVisualStyleBackColor = true;
+            this.btnAddNRows.Click += new System.EventHandler(this.btnAddNRows_Click);
             // 
             // btnDesconnect
             // 
@@ -335,7 +335,7 @@
             this.comboxPorts.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboxPorts.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.comboxPorts.FormattingEnabled = true;
-            this.comboxPorts.Location = new System.Drawing.Point(388, 5);
+            this.comboxPorts.Location = new System.Drawing.Point(388, 4);
             this.comboxPorts.Name = "comboxPorts";
             this.comboxPorts.Size = new System.Drawing.Size(110, 28);
             this.comboxPorts.TabIndex = 5;
@@ -343,9 +343,9 @@
             // 
             // btnRmvRow
             // 
-            this.btnRmvRow.Location = new System.Drawing.Point(83, 37);
+            this.btnRmvRow.Location = new System.Drawing.Point(174, 4);
             this.btnRmvRow.Name = "btnRmvRow";
-            this.btnRmvRow.Size = new System.Drawing.Size(105, 30);
+            this.btnRmvRow.Size = new System.Drawing.Size(129, 30);
             this.btnRmvRow.TabIndex = 4;
             this.btnRmvRow.Text = "Remover Linha(s)";
             this.btnRmvRow.UseVisualStyleBackColor = true;
@@ -646,16 +646,6 @@
             this.labelRX.TabIndex = 0;
             this.labelRX.Text = "RX";
             // 
-            // comboxMicro
-            // 
-            this.comboxMicro.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboxMicro.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.comboxMicro.FormattingEnabled = true;
-            this.comboxMicro.Location = new System.Drawing.Point(8, 3);
-            this.comboxMicro.Name = "comboxMicro";
-            this.comboxMicro.Size = new System.Drawing.Size(156, 24);
-            this.comboxMicro.TabIndex = 17;
-            // 
             // panelConsole
             // 
             this.panelConsole.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -670,23 +660,23 @@
             // 
             // button1
             // 
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.button1.Location = new System.Drawing.Point(170, 3);
+            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.button1.Location = new System.Drawing.Point(8, 37);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(79, 25);
+            this.button1.Size = new System.Drawing.Size(160, 30);
             this.button1.TabIndex = 18;
-            this.button1.Text = "Gerenciar";
+            this.button1.Text = "Lista de Registradores";
             this.button1.UseVisualStyleBackColor = true;
             // 
-            // panel1
+            // button2
             // 
-            this.panel1.Controls.Add(this.labelExibitionType);
-            this.panel1.Controls.Add(this.radbtnHex);
-            this.panel1.Controls.Add(this.radbtnBin);
-            this.panel1.Location = new System.Drawing.Point(8, 5);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(69, 62);
-            this.panel1.TabIndex = 17;
+            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.button2.Location = new System.Drawing.Point(174, 35);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(129, 30);
+            this.button2.TabIndex = 19;
+            this.button2.Text = "Remover Índices";
+            this.button2.UseVisualStyleBackColor = true;
             // 
             // App
             // 
@@ -701,6 +691,7 @@
             this.Text = "Gerenciamento de Memória do MSP430";
             this.panelDatagrid.ResumeLayout(false);
             this.splitTop.Panel1.ResumeLayout(false);
+            this.splitTop.Panel1.PerformLayout();
             this.splitTop.Panel2.ResumeLayout(false);
             this.splitTop.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitTop)).EndInit();
@@ -719,8 +710,6 @@
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
             this.panelConsole.ResumeLayout(false);
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -750,7 +739,7 @@
         private System.Windows.Forms.SplitContainer splitTop;
         private System.Windows.Forms.Label labelTX;
         private System.Windows.Forms.TextBox textBoxTX;
-        private System.Windows.Forms.Button btnAdd4Rows;
+        private System.Windows.Forms.Button btnAddNRows;
         private System.Windows.Forms.Button btnClearTX;
         private System.Windows.Forms.Button btnClearConsole;
         private System.Windows.Forms.Button btnClearCMD;
@@ -773,10 +762,9 @@
         private System.Windows.Forms.Button btnPause;
         private System.Windows.Forms.Button btnRun;
         private System.Windows.Forms.Button btnResetPuc;
-        private System.Windows.Forms.ComboBox comboxMicro;
         private System.Windows.Forms.Panel panelConsole;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Button button2;
     }
 }
 

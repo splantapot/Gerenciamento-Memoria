@@ -272,7 +272,7 @@ namespace gerenciamento_memoria {
             dataGrid.Rows.Add("x", "?", "?");
         }
 
-        private void btnAdd4Rows_Click(object sender, EventArgs e) {
+        private void btnAddNRows_Click(object sender, EventArgs e) {
             for (int i = 0; i < 4; i++) {
                 dataGrid.Rows.Add(i.ToString(), "?", "?");
             }
