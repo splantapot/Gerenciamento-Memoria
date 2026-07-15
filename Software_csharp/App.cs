@@ -1,4 +1,6 @@
-﻿using System;
+﻿using gerenciamento_memoria.classes;
+using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -23,13 +25,24 @@ namespace gerenciamento_memoria {
 
         private string str_buffer = "";
         private string str_ready = "";
-        private int[] raw_buffer = new int[4];
-        private int[] raw_ready = new int[4];
+
+        int qntRaws = 0;
+        private int[] raw_buffer;
+        private int[] raw_ready;
         private int raw_counter = 0;
+        private int dump_counter = 0;
         private STATE reading_state = STATE.DONE;
+        bool isWaitingAlocSize = false;
+
+        public void InitRawBuffer(int size) {
+            qntRaws = size;
+            raw_buffer = new int[qntRaws];
+            raw_ready = new int[qntRaws];
+        }
 
         public App() {
             InitializeComponent();      // APP Init
+            InitRawBuffer(qntRaws);
             com = new Communication();  // Instance Communication Obj
             RenderPortBox();            // Init setting
             RenderRadioButton();
@@ -44,7 +57,7 @@ namespace gerenciamento_memoria {
         // Open a connection
         private void DoConnection(string port = "") {
             reading_state = STATE.DONE;
-            if (com.IsConnected()) {
+            if (CheckConnectionStatus()) {
                 MessageBox.Show("Já conectado!");
                 return;
             }
@@ -56,21 +69,18 @@ namespace gerenciamento_memoria {
                 // Prevents error on setting callback to break and read
                 com.RmvReadCallback(ReadData);
                 com.SetReadCallback(ReadData);
-                btnConnected.Enabled = false;
-                btnDesconnect.Enabled = true;
-            }
-            else {
+            } else {
                 Console.WriteLine($"Porta [{selected_port}] não aberta (falha).");
                 MessageBox.Show("Não foi possível encontrar a porta.");
             }
+            CheckConnectionStatus();    // Updates the status of the buttons
         }
 
         // Close the connection
         private void DoDesconnection() {
             reading_state = STATE.DONE;
-            btnDesconnect.Enabled = false;
-            btnConnected.Enabled = true;
-            if (com.IsConnected()) {
+            bool status = CheckConnectionStatus();
+            if (status) {
                 if (com.Close(selected_port)) {
                     Console.WriteLine($"Porta [{selected_port}] encerrada.");
                     selected_port = null;
@@ -79,6 +89,7 @@ namespace gerenciamento_memoria {
                     Console.WriteLine($"Porta [{selected_port}] não encerrada (falha).");
                 }
             }
+            CheckConnectionStatus();    // Updates the status of the buttons
         }
 
         // Connect button
@@ -90,6 +101,21 @@ namespace gerenciamento_memoria {
         // Disconnect button
         private void btnDesconnect_Click(object sender, EventArgs e) {
             DoDesconnection();
+        }
+
+        private void btnRefreshPorts_Click(object sender, EventArgs e) {
+            if (CheckConnectionStatus()) {
+                MessageBox.Show("Desconecte antes de atualizar a lista de portas.");
+                return;
+            }
+            RenderPortBox();
+        }
+
+        private bool CheckConnectionStatus() {
+            bool status = com.IsConnected();
+            btnConnected.Enabled = !status;
+            btnDesconnect.Enabled = status;
+            return status;
         }
 
         /* ====================================  */
@@ -155,9 +181,10 @@ namespace gerenciamento_memoria {
                     break;
 
                 case STATE.RAW:
-                    raw_buffer[raw_counter++] = v;
-                    if (raw_counter >= 4) {
-                        // Calls the Buffer Render
+                    if (raw_counter < raw_buffer.Length) {
+                        raw_buffer[raw_counter++] = v;
+                    }
+                    if (raw_counter >= qntRaws) {
                         RenderRawBuffer();
                         reading_state = STATE.DONE;
                     }
@@ -186,9 +213,9 @@ namespace gerenciamento_memoria {
             }
         }
 
-        public void WriteCmdToMicro(byte cmd, byte qnt_bytes, params byte[] args) {
+        public void WriteCmdToMicro(byte cmd, byte num_args, params byte[] args) {
             try {
-                com.WriteCmd(cmd, qnt_bytes, args);
+                com.WriteCmd(cmd, num_args, args);
             } catch {
                 MessageBox.Show("Verifique a conexão da porta.");
             }
@@ -205,12 +232,25 @@ namespace gerenciamento_memoria {
                 return;
             }
             str_ready = str_buffer;
+
+            var match = System.Text.RegularExpressions.Regex.Match(str_ready, @"^ao(\d{3})\n$");
+            if (match.Success) {
+                int newSize = Convert.ToInt32(match.Groups[1].Value, 10);
+                Console.WriteLine(newSize);
+                InitRawBuffer(newSize);
+            }
+
+            // Show alert for dump in user box
+            if (!labelAlert.Visible) {
+                if (VerifyTrashInStr(str_ready)) dump_counter++;
+                labelAlert.Visible = dump_counter >= 10;
+            }
+
             if (isUserStr) {
                 //Console.WriteLine($"[USER] {str_ready}");//Console.WriteLine($"[USER] {str_ready}");
                 //if (!str_ready.Contains("\u00FF"))//<<<<<<<<<<<filtra o valor de caracter 255, gerado ao resetar. Resolvi, mas Se AINDA PERSISTIR DESCOMENTE ESTA LINHA
                 textBoxTX.AppendText(str_ready.Replace("\n", "\r\n"));
-            }
-            else {
+            } else {
                 //Console.WriteLine($"[TEXT] {str_ready}");
                 textboxConsole.SelectionColor = Color.Black;
                 if (str_ready.Contains("ERRO"))//<<<<<<<<<<
@@ -273,7 +313,7 @@ namespace gerenciamento_memoria {
         }
 
         private void btnAddNRows_Click(object sender, EventArgs e) {
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < 5; i++) {
                 dataGrid.Rows.Add(i.ToString(), "?", "?");
             }
         }
@@ -405,7 +445,7 @@ namespace gerenciamento_memoria {
         /* ====================================  */
         /* Render the PortCombobox               */
         /* ====================================  */
-        private void RenderPortBox(bool isInit = false) {
+        private void RenderPortBox() {
             if (this.InvokeRequired) {
                 this.Invoke(new Action(() => RenderPortBox()));
                 return;
@@ -423,8 +463,7 @@ namespace gerenciamento_memoria {
             if (selected_port == null && ports.Length == 1) {
                 comboxPorts.SelectedIndex = 0;
                 selected_port = comboxPorts.SelectedItem as string;
-            }
-            else if (!com.IsConnected()) {
+            } else if (!CheckConnectionStatus()) {
                 comboxPorts.Text = "";
                 comboxPorts.SelectedIndex = -1;
                 selected_port = null;
@@ -616,6 +655,62 @@ namespace gerenciamento_memoria {
 
         private void radbtnBin_CheckedChanged(object sender, EventArgs e) {
             UpdateColumnName();
+        }
+
+        private void Run193(Register register) {
+            if (register != null) {
+                int qnt_bits = register.Bits;
+                int qnt_bytes = qnt_bits / 8;
+                int address = register.Address;
+                WriteCmdToMicro(193, 3, (byte)(address % 256), (byte)(address >> 8), (byte)qnt_bytes);
+            }
+        }
+
+        private void btnAddIdx_Click(object sender, EventArgs e) {
+            using (AppCreateIndex registersDialog = new AppCreateIndex()) {
+                if (registersDialog.ShowDialog() == DialogResult.OK) {
+                    registersDialog.selected_registers.ForEach(register => {
+                        Run193(register);
+                    });
+                }
+            }
+        }
+
+        private void btnAddEnd_Click(object sender, EventArgs e) {
+            using (AppCreateIndex registersDialog = new AppCreateIndex(true)) {
+                if (registersDialog.ShowDialog() == DialogResult.OK) {
+                    Register register = registersDialog.selected_registers[0];
+                    Run193(register);
+                }
+            }
+        }
+
+        /* ====================================  */
+        /* Verificação se texto está poluído     */
+        /* ====================================  */
+        public bool VerifyTrashInStr(string text, double maxDumpPercent = 0.40) {
+            if (string.IsNullOrEmpty(text)) return false;
+            int validChar = 0;
+            int dumpChar = 0;
+            foreach (char c in text) {
+                if (c > 127 || (c < 32 && c != '\n' && c != '\r')) {
+                    dumpChar++;
+                } else if (!char.IsWhiteSpace(c)) {
+                    validChar++;
+                }
+            }
+            if (validChar + dumpChar == 0) return false;
+            double propDump = (double)dumpChar / (validChar + dumpChar);
+            return propDump > maxDumpPercent;
+        }
+
+        private void btnGetN_Click(object sender, EventArgs e) {
+            labelAlert.Visible = false;
+            dump_counter = 0;
+            reading_state = STATE.DONE;
+            //RenderStrBuffer();
+            //RenderRawBuffer();
+            WriteCmdToMicro(194, 0);
         }
     }
 }

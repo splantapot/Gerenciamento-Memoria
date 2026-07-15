@@ -143,17 +143,17 @@ namespace gerenciamento_memoria {
             _serialPort.BreakState = false;
         }
 
-        public void WriteCmd(byte cmd, byte qnt_bytes, params byte[] args) {
+        public void WriteCmd(byte cmd, byte num_args, params byte[] args) {
             WriteBreak();
             WriteRaw(cmd);
-            WriteRaw(qnt_bytes);
-            Console.WriteLine($"=== {cmd} : {qnt_bytes} ===");
-            for (int i = 0; i < qnt_bytes; i++) {
+            WriteRaw(num_args);
+            //Console.WriteLine($"=== {cmd} : {num_args} ===");
+            for (int i = 0; i < num_args; i++) {
                 WriteRaw(args[i]);
-                Console.Write(args[i]);
-                if (i < qnt_bytes - 1) Console.Write(", ");
+                //Console.Write(args[i]);
+                //if (i < num_args - 1) Console.Write(", ");
             }
-            Console.WriteLine("");
+            //Console.WriteLine("");
         }
     }
 }

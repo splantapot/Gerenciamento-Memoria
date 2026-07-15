@@ -6,56 +6,13 @@
  */
 #include <msp430g2553.h>
 #include "gerenciador_memoria.h"
+char* msg = "TESTE\r\n";//DEON //<<<<<<<<<<apagar depois
 
 MEM* vetor_ptr = NULL; MEM vetor_qtd = NULL; byte svt = 0;//indica a quantidade de vetores de uma ou mais posições.
+byte e = 0; byte imp_user = 0; byte cont = 0;//contador de amostragem dos RAWs.
 
-//variaveis do gerenciador
-volatile byte break_condicao;//acessivel
-byte e = 0; ////??static é possivel para enum?
-enum EnumTxEtapas txEtapa = FAZ_NADA;//todo variaveis, permitir que o usuario definina variavieis como "i" global sem que haja erro de comp. Solucao: static quando for possível
-
-// P3OUT is 19 in hex
-volatile byte* pc = 0; //GERENCIADOR de memoria.  pc aponta para ninguem. Com volatile, ele é obrigado a ler da memória toda vez.
+volatile byte* pc = 0; //pc aponta para ninguem. Com volatile, ele é obrigado a ler da memória toda vez.
 byte qtd_itens_fila = 0; char* fila_msgs[5]; //fila
-byte imp_user = 0;//para informar se vai ter ou se está tendo imprimando de mensagens do usuario
-
-byte escreve_endereco(byte dado) {
-	static byte estado = 0; static byte buffer_rx[6];//sem inicializacao mesmo
-
-	if(break_condicao) {//detectou o break gerado pelo C#?
-		UCA0STAT &= ~UCBRK; estado = 1; buffer_rx[1] = 254;//valor sentinela para aguardar receber o segundo RxData, i.e, a qtd de argumentos
-	} else if (estado){//if estado qualquer valor diferente de zero
-		buffer_rx[estado - 1] = dado;//armazena cada dado no buffer //0: CMD, 1: QTD_dados: 2 a varios dados: os dados ou nao	//244,      1: 1
-
-		if ( buffer_rx[1] == (estado - 2) ){//recebeu todos os parametros?  buffer_rx[0]=>CMD e buffer_rx[1]=> a QTD de argumentos //decodificar o comando que está no buffer
-
-			switch(buffer_rx[0]){//qual comando? e faça o que tem que ser feito para o comando
-				case 251://comando write no "indice" da tabela do C#
-					write_ind(buffer_rx[2], buffer_rx[2 + 1]);//*(vetor_ptr[indice]) = valor;
-					break;
-				case 190://BITSET, //BITCLEAR, BITINV respectivamente
-				case 191:
-				case 192://comandos 190 a 192 de TRÊS argumentos://indice (baixo), indice_alto, valor
-					#define end16   ((unsigned int)(buffer_rx[2 + 1] << 8) + (unsigned int)buffer_rx[2])
-					if (buffer_rx[0] == 190) 		*(byte*)end16 |= buffer_rx[2 + 2];//setar
-					else if (buffer_rx[0] == 191) 	*(byte*)end16 &= ~buffer_rx[2 + 2];//limpar
-					else 							*(byte*)end16 ^= buffer_rx[2 + 2];//inverter
-					break;
-
-				//case 193: aloc_addr((MEM)end16,  buffer_rx[4])
-				case 247: estado = 0; 							return 247;//break;//despausa a main //RUN
-				case 246: __bis_SR_register_on_exit(LPM0_bits); break;//pausar //pausa a main o
-				case 245: WDTCTL = 0; 							break;//Resetar por PUC
-			}//switch buffer_rx[0]
-
-			estado = 0; return 2;//feito? então retorne 2, mas colocando o estado em zero
-		}//else if buffer_re == estado - 2
-
-		estado++;
-	}//if estado != de zero
-
-	return estado;
-}//escreve_endereco()
 
 void imprima_gerenciador(char* ptr_C) {//Funcao NAO bloqueante
 	fila_msgs[qtd_itens_fila++] = ptr_C;  		//adiciona o ponteiro a fila
@@ -86,7 +43,8 @@ byte aloc_addr(MEM p, byte tam){//aloca endereço no vetor_ptr
 		vetor_ptr = p1; vetor_qtd = p2;
 		vetor_ptr[svt] = p; vetor_qtd[svt] = tam - 1;//seria bom verificar o TAM
 		svt++;
-		imprima_gerenciador("ao\n");//alocacão ok
+	    obter_inds(tam);
+		//imprima_gerenciador("ao\n"); //alocacão ok
 		//while(e); todo aguarda a transmissao da msg antes de retornar
 		return 1;//sucesso
 	} else {
@@ -96,7 +54,21 @@ byte aloc_addr(MEM p, byte tam){//aloca endereço no vetor_ptr
 	}
 }//funcao add_addr
 
-void write_ind(byte indice, byte valor){//todo a ser testada
+// Escreve a confirmação da quantidade de índices salva, no formato: "ao000\n"
+void obter_inds(byte bytes_to_add) {
+    static byte tam_N = 0; // Quantos bytes de índice temos no total
+    tam_N += bytes_to_add;
+    char msg_confirmacao[7] = {
+      'a','o',
+      '0' + (tam_N/100),
+      '0' + ((tam_N%100)/10),
+      '0' + (tam_N%10),
+      '\n', '\0'
+    };
+    imprima_gerenciador(msg_confirmacao);
+}//funcao obter_inds
+
+void write_ind(byte indice, byte valor){
 	byte i, j, it = 0;
 	for (i = 0; i < svt; i++) {
 		for (j = 0; j <= vetor_qtd[i]; j++) {//<<<< aqui

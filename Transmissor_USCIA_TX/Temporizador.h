@@ -17,4 +17,7 @@ typedef struct temporizador Temporizador;
 void inicializa_temporizador(unsigned int tempo, Temporizador* t);
 char passou_tempo(Temporizador* t);
 void reseta_temporizador(Temporizador* t);
+#define TEMPO_TICK 10000 /* 10 mil us = 10 ms*/ //para uso da Biblioteca do TEMPORIZADOR
+unsigned int tick;//ou ainda extern unsigned int tick; e deixar declarada unsigned int tick em Temporizador.c
+void setup_tick(unsigned int tempo_tick);
 #endif /* TEMPORIZADOR_H_ */

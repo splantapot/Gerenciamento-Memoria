@@ -26,20 +26,24 @@
             this.btnAddRow = new System.Windows.Forms.Button();
             this.panelDatagrid = new System.Windows.Forms.Panel();
             this.splitTop = new System.Windows.Forms.SplitContainer();
-            this.labelExibitionType = new System.Windows.Forms.Label();
             this.radbtnBin = new System.Windows.Forms.RadioButton();
             this.radbtnHex = new System.Windows.Forms.RadioButton();
-            this.btnWriteMSP = new System.Windows.Forms.Button();
+            this.labelExibitionType = new System.Windows.Forms.Label();
             this.dataGrid = new System.Windows.Forms.DataGridView();
             this.colIndexes = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colReadHex = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colReadDec = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colWriteHex = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colWriteDec = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.labelAlert = new System.Windows.Forms.Label();
             this.btnClearTX = new System.Windows.Forms.Button();
             this.labelTX = new System.Windows.Forms.Label();
             this.textBoxTX = new System.Windows.Forms.TextBox();
+            this.btnWriteMSP = new System.Windows.Forms.Button();
             this.panelButtons = new System.Windows.Forms.Panel();
+            this.btnRefreshPorts = new System.Windows.Forms.Button();
+            this.btnAddEnd = new System.Windows.Forms.Button();
+            this.btnAddIx = new System.Windows.Forms.Button();
             this.btnAddNRows = new System.Windows.Forms.Button();
             this.btnDesconnect = new System.Windows.Forms.Button();
             this.btnConnected = new System.Windows.Forms.Button();
@@ -47,6 +51,7 @@
             this.btnRmvRow = new System.Windows.Forms.Button();
             this.panelMsg = new System.Windows.Forms.Panel();
             this.splitMsg = new System.Windows.Forms.SplitContainer();
+            this.panelConsole = new System.Windows.Forms.Panel();
             this.textboxConsole = new System.Windows.Forms.RichTextBox();
             this.btnClearConsole = new System.Windows.Forms.Button();
             this.labelConsole = new System.Windows.Forms.Label();
@@ -70,9 +75,7 @@
             this.btnSendRX = new System.Windows.Forms.Button();
             this.textboxRX = new System.Windows.Forms.TextBox();
             this.labelRX = new System.Windows.Forms.Label();
-            this.panelConsole = new System.Windows.Forms.Panel();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.btnGetN = new System.Windows.Forms.Button();
             this.panelDatagrid.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitTop)).BeginInit();
             this.splitTop.Panel1.SuspendLayout();
@@ -85,17 +88,17 @@
             this.splitMsg.Panel1.SuspendLayout();
             this.splitMsg.Panel2.SuspendLayout();
             this.splitMsg.SuspendLayout();
+            this.panelConsole.SuspendLayout();
             this.tabctrlCMD.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
-            this.panelConsole.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnAddRow
             // 
             this.btnAddRow.Location = new System.Drawing.Point(8, 4);
             this.btnAddRow.Name = "btnAddRow";
-            this.btnAddRow.Size = new System.Drawing.Size(90, 30);
+            this.btnAddRow.Size = new System.Drawing.Size(120, 30);
             this.btnAddRow.TabIndex = 1;
             this.btnAddRow.Text = "Adicionar Linha";
             this.btnAddRow.UseVisualStyleBackColor = true;
@@ -125,6 +128,7 @@
             // 
             // splitTop.Panel2
             // 
+            this.splitTop.Panel2.Controls.Add(this.labelAlert);
             this.splitTop.Panel2.Controls.Add(this.btnClearTX);
             this.splitTop.Panel2.Controls.Add(this.labelTX);
             this.splitTop.Panel2.Controls.Add(this.textBoxTX);
@@ -132,16 +136,6 @@
             this.splitTop.SplitterDistance = 342;
             this.splitTop.SplitterWidth = 6;
             this.splitTop.TabIndex = 1;
-            // 
-            // labelExibitionType
-            // 
-            this.labelExibitionType.AutoSize = true;
-            this.labelExibitionType.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelExibitionType.Location = new System.Drawing.Point(12, 6);
-            this.labelExibitionType.Name = "labelExibitionType";
-            this.labelExibitionType.Size = new System.Drawing.Size(62, 15);
-            this.labelExibitionType.TabIndex = 16;
-            this.labelExibitionType.Text = "Exibir em:";
             // 
             // radbtnBin
             // 
@@ -169,16 +163,15 @@
             this.radbtnHex.UseVisualStyleBackColor = true;
             this.radbtnHex.CheckedChanged += new System.EventHandler(this.radbtnHex_CheckedChanged);
             // 
-            // btnWriteMSP
+            // labelExibitionType
             // 
-            this.btnWriteMSP.Location = new System.Drawing.Point(504, 37);
-            this.btnWriteMSP.Name = "btnWriteMSP";
-            this.btnWriteMSP.Size = new System.Drawing.Size(165, 27);
-            this.btnWriteMSP.TabIndex = 10;
-            this.btnWriteMSP.Text = "Gravar MSP";
-            this.btnWriteMSP.UseVisualStyleBackColor = true;
-            this.btnWriteMSP.Visible = false;
-            this.btnWriteMSP.Click += new System.EventHandler(this.btnWriteMSP_Click);
+            this.labelExibitionType.AutoSize = true;
+            this.labelExibitionType.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labelExibitionType.Location = new System.Drawing.Point(12, 6);
+            this.labelExibitionType.Name = "labelExibitionType";
+            this.labelExibitionType.Size = new System.Drawing.Size(62, 15);
+            this.labelExibitionType.TabIndex = 16;
+            this.labelExibitionType.Text = "Exibir em:";
             // 
             // dataGrid
             // 
@@ -245,10 +238,22 @@
             this.colWriteDec.ToolTipText = "Escrever Decimal";
             this.colWriteDec.Width = 55;
             // 
+            // labelAlert
+            // 
+            this.labelAlert.AutoSize = true;
+            this.labelAlert.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelAlert.ForeColor = System.Drawing.Color.OrangeRed;
+            this.labelAlert.Location = new System.Drawing.Point(32, 19);
+            this.labelAlert.Name = "labelAlert";
+            this.labelAlert.Size = new System.Drawing.Size(198, 13);
+            this.labelAlert.TabIndex = 21;
+            this.labelAlert.Text = "*OBS: Considere sincronizar novamente.";
+            this.labelAlert.Visible = false;
+            // 
             // btnClearTX
             // 
             this.btnClearTX.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClearTX.Location = new System.Drawing.Point(241, 6);
+            this.btnClearTX.Location = new System.Drawing.Point(235, 6);
             this.btnClearTX.Name = "btnClearTX";
             this.btnClearTX.Size = new System.Drawing.Size(80, 24);
             this.btnClearTX.TabIndex = 15;
@@ -277,17 +282,28 @@
             this.textBoxTX.Name = "textBoxTX";
             this.textBoxTX.ReadOnly = true;
             this.textBoxTX.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxTX.Size = new System.Drawing.Size(313, 169);
+            this.textBoxTX.Size = new System.Drawing.Size(307, 169);
             this.textBoxTX.TabIndex = 1;
+            // 
+            // btnWriteMSP
+            // 
+            this.btnWriteMSP.Location = new System.Drawing.Point(138, 43);
+            this.btnWriteMSP.Name = "btnWriteMSP";
+            this.btnWriteMSP.Size = new System.Drawing.Size(126, 31);
+            this.btnWriteMSP.TabIndex = 10;
+            this.btnWriteMSP.Text = "Gravar MSP";
+            this.btnWriteMSP.UseVisualStyleBackColor = true;
+            this.btnWriteMSP.Visible = false;
+            this.btnWriteMSP.Click += new System.EventHandler(this.btnWriteMSP_Click);
             // 
             // panelButtons
             // 
-            this.panelButtons.Controls.Add(this.button2);
-            this.panelButtons.Controls.Add(this.button1);
+            this.panelButtons.Controls.Add(this.btnRefreshPorts);
+            this.panelButtons.Controls.Add(this.btnAddEnd);
+            this.panelButtons.Controls.Add(this.btnAddIx);
             this.panelButtons.Controls.Add(this.btnAddNRows);
             this.panelButtons.Controls.Add(this.btnDesconnect);
             this.panelButtons.Controls.Add(this.btnConnected);
-            this.panelButtons.Controls.Add(this.btnWriteMSP);
             this.panelButtons.Controls.Add(this.comboxPorts);
             this.panelButtons.Controls.Add(this.btnAddRow);
             this.panelButtons.Controls.Add(this.btnRmvRow);
@@ -297,20 +313,54 @@
             this.panelButtons.Size = new System.Drawing.Size(684, 70);
             this.panelButtons.TabIndex = 8;
             // 
+            // btnRefreshPorts
+            // 
+            this.btnRefreshPorts.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRefreshPorts.Font = new System.Drawing.Font("Segoe MDL2 Assets", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnRefreshPorts.Location = new System.Drawing.Point(643, 3);
+            this.btnRefreshPorts.Name = "btnRefreshPorts";
+            this.btnRefreshPorts.Size = new System.Drawing.Size(26, 25);
+            this.btnRefreshPorts.TabIndex = 20;
+            this.btnRefreshPorts.Text = "";
+            this.btnRefreshPorts.UseVisualStyleBackColor = true;
+            this.btnRefreshPorts.Click += new System.EventHandler(this.btnRefreshPorts_Click);
+            // 
+            // btnAddEnd
+            // 
+            this.btnAddEnd.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.btnAddEnd.Location = new System.Drawing.Point(158, 37);
+            this.btnAddEnd.Name = "btnAddEnd";
+            this.btnAddEnd.Size = new System.Drawing.Size(145, 30);
+            this.btnAddEnd.TabIndex = 19;
+            this.btnAddEnd.Text = "Exibir a partir de Endereço";
+            this.btnAddEnd.UseVisualStyleBackColor = true;
+            this.btnAddEnd.Click += new System.EventHandler(this.btnAddEnd_Click);
+            // 
+            // btnAddIx
+            // 
+            this.btnAddIx.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.btnAddIx.Location = new System.Drawing.Point(8, 37);
+            this.btnAddIx.Name = "btnAddIx";
+            this.btnAddIx.Size = new System.Drawing.Size(145, 30);
+            this.btnAddIx.TabIndex = 18;
+            this.btnAddIx.Text = "Adicionar Índices";
+            this.btnAddIx.UseVisualStyleBackColor = true;
+            this.btnAddIx.Click += new System.EventHandler(this.btnAddIdx_Click);
+            // 
             // btnAddNRows
             // 
-            this.btnAddNRows.Location = new System.Drawing.Point(104, 4);
+            this.btnAddNRows.Location = new System.Drawing.Point(132, 4);
             this.btnAddNRows.Name = "btnAddNRows";
-            this.btnAddNRows.Size = new System.Drawing.Size(64, 30);
+            this.btnAddNRows.Size = new System.Drawing.Size(45, 30);
             this.btnAddNRows.TabIndex = 9;
-            this.btnAddNRows.Text = "x N";
+            this.btnAddNRows.Text = "x 5";
             this.btnAddNRows.UseVisualStyleBackColor = true;
             this.btnAddNRows.Click += new System.EventHandler(this.btnAddNRows_Click);
             // 
             // btnDesconnect
             // 
             this.btnDesconnect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDesconnect.Location = new System.Drawing.Point(589, 4);
+            this.btnDesconnect.Location = new System.Drawing.Point(589, 34);
             this.btnDesconnect.Name = "btnDesconnect";
             this.btnDesconnect.Size = new System.Drawing.Size(80, 30);
             this.btnDesconnect.TabIndex = 7;
@@ -321,7 +371,7 @@
             // btnConnected
             // 
             this.btnConnected.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnConnected.Location = new System.Drawing.Point(504, 4);
+            this.btnConnected.Location = new System.Drawing.Point(503, 34);
             this.btnConnected.Name = "btnConnected";
             this.btnConnected.Size = new System.Drawing.Size(80, 30);
             this.btnConnected.TabIndex = 6;
@@ -333,19 +383,19 @@
             // 
             this.comboxPorts.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboxPorts.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboxPorts.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.comboxPorts.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.comboxPorts.FormattingEnabled = true;
-            this.comboxPorts.Location = new System.Drawing.Point(388, 4);
+            this.comboxPorts.Location = new System.Drawing.Point(503, 4);
             this.comboxPorts.Name = "comboxPorts";
-            this.comboxPorts.Size = new System.Drawing.Size(110, 28);
+            this.comboxPorts.Size = new System.Drawing.Size(135, 24);
             this.comboxPorts.TabIndex = 5;
             this.comboxPorts.SelectedIndexChanged += new System.EventHandler(this.comboxPorts_SelectedIndexChanged);
             // 
             // btnRmvRow
             // 
-            this.btnRmvRow.Location = new System.Drawing.Point(174, 4);
+            this.btnRmvRow.Location = new System.Drawing.Point(183, 4);
             this.btnRmvRow.Name = "btnRmvRow";
-            this.btnRmvRow.Size = new System.Drawing.Size(129, 30);
+            this.btnRmvRow.Size = new System.Drawing.Size(120, 30);
             this.btnRmvRow.TabIndex = 4;
             this.btnRmvRow.Text = "Remover Linha(s)";
             this.btnRmvRow.UseVisualStyleBackColor = true;
@@ -390,6 +440,18 @@
             this.splitMsg.SplitterWidth = 6;
             this.splitMsg.TabIndex = 0;
             // 
+            // panelConsole
+            // 
+            this.panelConsole.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelConsole.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelConsole.Controls.Add(this.textboxConsole);
+            this.panelConsole.Location = new System.Drawing.Point(8, 36);
+            this.panelConsole.Name = "panelConsole";
+            this.panelConsole.Size = new System.Drawing.Size(331, 236);
+            this.panelConsole.TabIndex = 16;
+            // 
             // textboxConsole
             // 
             this.textboxConsole.BorderStyle = System.Windows.Forms.BorderStyle.None;
@@ -433,18 +495,20 @@
             this.tabctrlCMD.Location = new System.Drawing.Point(7, 84);
             this.tabctrlCMD.Name = "tabctrlCMD";
             this.tabctrlCMD.SelectedIndex = 0;
-            this.tabctrlCMD.Size = new System.Drawing.Size(314, 110);
+            this.tabctrlCMD.Size = new System.Drawing.Size(308, 110);
             this.tabctrlCMD.TabIndex = 17;
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.btnGetN);
             this.tabPage1.Controls.Add(this.btnResetPuc);
             this.tabPage1.Controls.Add(this.btnPause);
             this.tabPage1.Controls.Add(this.btnRun);
+            this.tabPage1.Controls.Add(this.btnWriteMSP);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(306, 84);
+            this.tabPage1.Size = new System.Drawing.Size(300, 84);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "1";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -491,7 +555,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(306, 84);
+            this.tabPage2.Size = new System.Drawing.Size(300, 84);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "2";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -499,7 +563,7 @@
             // btnBITSET
             // 
             this.btnBITSET.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBITSET.Location = new System.Drawing.Point(118, 15);
+            this.btnBITSET.Location = new System.Drawing.Point(112, 15);
             this.btnBITSET.Name = "btnBITSET";
             this.btnBITSET.Size = new System.Drawing.Size(60, 52);
             this.btnBITSET.TabIndex = 20;
@@ -514,13 +578,13 @@
             this.textboxCMDAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.textboxCMDAddress.Location = new System.Drawing.Point(39, 15);
             this.textboxCMDAddress.Name = "textboxCMDAddress";
-            this.textboxCMDAddress.Size = new System.Drawing.Size(73, 23);
+            this.textboxCMDAddress.Size = new System.Drawing.Size(67, 23);
             this.textboxCMDAddress.TabIndex = 15;
             // 
             // btnBITINV
             // 
             this.btnBITINV.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBITINV.Location = new System.Drawing.Point(243, 15);
+            this.btnBITINV.Location = new System.Drawing.Point(237, 15);
             this.btnBITINV.Name = "btnBITINV";
             this.btnBITINV.Size = new System.Drawing.Size(60, 52);
             this.btnBITINV.TabIndex = 21;
@@ -555,13 +619,13 @@
             this.textboxCMDBit.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.textboxCMDBit.Location = new System.Drawing.Point(39, 44);
             this.textboxCMDBit.Name = "textboxCMDBit";
-            this.textboxCMDBit.Size = new System.Drawing.Size(73, 23);
+            this.textboxCMDBit.Size = new System.Drawing.Size(67, 23);
             this.textboxCMDBit.TabIndex = 18;
             // 
             // btnBITCLR
             // 
             this.btnBITCLR.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBITCLR.Location = new System.Drawing.Point(180, 15);
+            this.btnBITCLR.Location = new System.Drawing.Point(174, 15);
             this.btnBITCLR.Name = "btnBITCLR";
             this.btnBITCLR.Size = new System.Drawing.Size(60, 52);
             this.btnBITCLR.TabIndex = 19;
@@ -572,7 +636,7 @@
             // btnClearCMD
             // 
             this.btnClearCMD.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClearCMD.Location = new System.Drawing.Point(241, 196);
+            this.btnClearCMD.Location = new System.Drawing.Point(235, 196);
             this.btnClearCMD.Name = "btnClearCMD";
             this.btnClearCMD.Size = new System.Drawing.Size(80, 24);
             this.btnClearCMD.TabIndex = 16;
@@ -591,7 +655,7 @@
             this.textboxCMDLog.Name = "textboxCMDLog";
             this.textboxCMDLog.ReadOnly = true;
             this.textboxCMDLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textboxCMDLog.Size = new System.Drawing.Size(314, 49);
+            this.textboxCMDLog.Size = new System.Drawing.Size(308, 49);
             this.textboxCMDLog.TabIndex = 1;
             // 
             // labelCMDReg
@@ -617,7 +681,7 @@
             // btnSendRX
             // 
             this.btnSendRX.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSendRX.Location = new System.Drawing.Point(241, 35);
+            this.btnSendRX.Location = new System.Drawing.Point(235, 35);
             this.btnSendRX.Name = "btnSendRX";
             this.btnSendRX.Size = new System.Drawing.Size(80, 24);
             this.btnSendRX.TabIndex = 5;
@@ -632,7 +696,7 @@
             this.textboxRX.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.textboxRX.Location = new System.Drawing.Point(7, 36);
             this.textboxRX.Name = "textboxRX";
-            this.textboxRX.Size = new System.Drawing.Size(228, 23);
+            this.textboxRX.Size = new System.Drawing.Size(222, 23);
             this.textboxRX.TabIndex = 1;
             this.textboxRX.KeyDown += new System.Windows.Forms.KeyEventHandler(this._cmdBox_KeyDown);
             // 
@@ -646,37 +710,15 @@
             this.labelRX.TabIndex = 0;
             this.labelRX.Text = "RX";
             // 
-            // panelConsole
+            // btnGetN
             // 
-            this.panelConsole.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelConsole.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panelConsole.Controls.Add(this.textboxConsole);
-            this.panelConsole.Location = new System.Drawing.Point(8, 36);
-            this.panelConsole.Name = "panelConsole";
-            this.panelConsole.Size = new System.Drawing.Size(331, 236);
-            this.panelConsole.TabIndex = 16;
-            // 
-            // button1
-            // 
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.button1.Location = new System.Drawing.Point(8, 37);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(160, 30);
-            this.button1.TabIndex = 18;
-            this.button1.Text = "Lista de Registradores";
-            this.button1.UseVisualStyleBackColor = true;
-            // 
-            // button2
-            // 
-            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.button2.Location = new System.Drawing.Point(174, 35);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(129, 30);
-            this.button2.TabIndex = 19;
-            this.button2.Text = "Remover Índices";
-            this.button2.UseVisualStyleBackColor = true;
+            this.btnGetN.Location = new System.Drawing.Point(6, 43);
+            this.btnGetN.Name = "btnGetN";
+            this.btnGetN.Size = new System.Drawing.Size(126, 31);
+            this.btnGetN.TabIndex = 24;
+            this.btnGetN.Text = "SINCRONIZAR";
+            this.btnGetN.UseVisualStyleBackColor = true;
+            this.btnGetN.Click += new System.EventHandler(this.btnGetN_Click);
             // 
             // App
             // 
@@ -705,11 +747,11 @@
             this.splitMsg.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitMsg)).EndInit();
             this.splitMsg.ResumeLayout(false);
+            this.panelConsole.ResumeLayout(false);
             this.tabctrlCMD.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
-            this.panelConsole.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -763,8 +805,11 @@
         private System.Windows.Forms.Button btnRun;
         private System.Windows.Forms.Button btnResetPuc;
         private System.Windows.Forms.Panel panelConsole;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button btnAddIx;
+        private System.Windows.Forms.Button btnAddEnd;
+        private System.Windows.Forms.Button btnRefreshPorts;
+        private System.Windows.Forms.Label labelAlert;
+        private System.Windows.Forms.Button btnGetN;
     }
 }
 

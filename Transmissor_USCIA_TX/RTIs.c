@@ -2,36 +2,25 @@
 #include <Temporizador.h>
 #include "gerenciador_memoria.h"
 
-char* msg = "TESTE\r\n";//DEON //<<<<<<<<<<apagar depois
-static byte cont = 0;//contador de amostragem dos RAWs.
-
 #pragma vector=TIMER1_A1_VECTOR
 __interrupt void TIMER1_A1_ISR_HOOK(void){//RTI do timer E421
 	switch (TA1IV) {
 	case TA1IV_TACCR2:  //canal 2, //Vem pra cá a cada intervalo de tempo definido pelo ta1ccr2
 		if (!imp_user){ //se nao esta imprimindo mensagens comuns, transmita dados da memoria
 			if (e == 0) { //estado de decisao, se envia string ou sequencia de dados RAWs
-
 				if (qtd_itens_fila) {  //se tem item na fila, pega ele
 					pc = fila_msgs[0]; //pega o primeiro elemento. Obs: deixa por enquanto esse warning, pois assim funcionou. /*pc = msg; pc = paux; int x;  = 0;*/
 					byte ite;  //indexador ou iterador
 					for (ite = 0; ite < (qtd_itens_fila - 1); ite++) //deslocamento os ponteiros
 						fila_msgs[ite] = fila_msgs[ite + 1]; //desloca os elementos na fila, caminhando a fila...
 					qtd_itens_fila--;
-				}
 
-				if (pc != 0) {  //tenho string vindo da fila?//
-					IE2 |= UCA0TXIE;
-					e = 1;
-					txEtapa = HEADER;  //tendo, imprima-a
-				} else
-					if(svt){//ha dados para mostrar?
-						if (++cont >= 10) { //momento de ver se é para enviar os RAWs, até que a contagem chegue
-							IE2 |= UCA0TXIE;
-							e = 3;
-							txEtapa = HEADER; //<<<<<<<<<<<i = 1;
-						} //100 ms
-					}//if (svt)
+					IE2 |= UCA0TXIE;	e = 1;
+				} else if(svt){//ha dados para mostrar?
+					if (++cont >= 10) { //momento de ver se é para enviar os RAWs, até que a contagem chegue
+						IE2 |= UCA0TXIE; e = 3;
+					} //@100 ms
+				}//else if (svt)
 			} //if e == 0
 		}//if imp_ser igual a zero.
 
@@ -44,84 +33,87 @@ __interrupt void TIMER1_A1_ISR_HOOK(void){//RTI do timer E421
 #pragma vector=USCIAB0TX_VECTOR
 __interrupt void USCI0TX_ISR(void){	//1) versão com break;
 	static byte i = 0; static byte j = 0;//indices da matriz esparsa
+	static byte txCount = 0;
 
-	switch (txEtapa) {
-	case TX_DADOS:
-		switch (e) {
-		case 1:
-			if (*pc == 0){//fim da string, i.e, feito?
-				e = 0;  IE2 &= ~UCA0TXIE; pc = 0;	//clear_e_cont_txie_pc;
-				txEtapa = FAZ_NADA;//desnecessario mesmo isto? penso que sim no momento
-			} //pc em zero é o mesmo indicativo de TXie em zero, talvez desnecessário ter que zerar ele
-			else { UCA0TXBUF = *pc++; }//nao, i,e, caracteres ainda a enviar
-			break;
-
-		case 3:
-			if (i < svt ){
-				UCA0TXBUF = vetor_ptr[i][j];//aponta para o raw e avança o indice i
-				if (j >= vetor_qtd[i]){
+	//if(e) //para implementacao futura de algo bem interessante
+	if (txCount < 2)//transmitir os dois bytes
+		UCA0TXBUF = (txCount++)? e : 255;//transmite 255 e depois "e"
+	else {//transmitir conforme o ID , i.e, e
+		if (e == 1) {
+			if (*pc == 0) {
+				IE2 &= ~UCA0TXIE;
+				e = txCount = 0; pc = 0;
+			}
+			else UCA0TXBUF = *pc++;
+		}
+		else if (e == 3) {
+			if (i < svt) {
+				UCA0TXBUF = vetor_ptr[i][j];
+				if (j >= vetor_qtd[i]) {
 					j = 0; i++;
 				} else j++;
-			} else {
-				i = j = 0; clear_e_cont_txie_pc;
-				txEtapa = FAZ_NADA;
-			}//else if i < svt
-
-			break;
-
-			//UCA0TXBUF = *vetor_ptr[i++];//aponta para o raw e avança o indice i
-			//if (i > (4 - 1)) {//enviou todos os raws? /*sizeof(vetor_ptr)>>1)*/
-			//	i = 0;//0 1 2
-			//	clear_e_cont_txie_pc;
-			//	txEtapa = FAZ_NADA;//desnecessario mesmo isto? penso que sim no momento
-			//}//se enviou todos os raws
-			//break;
-
-		}//fim do switch
-		break;
-
-	case ID:
-		UCA0TXBUF = e; txEtapa = TX_DADOS;
-		break;
-	case HEADER:// É necessário enviar um "dummy byte" para disparar a sequência// UCA0TXBUF = 0x00;
-		UCA0TXBUF = 255; txEtapa = ID;
-		break;
-	case FAZ_NADA:
-		break;
-	}//switch
-
-	//if (e == 0){//para impressao de dados do usuario nao bloqueante, i.e, via interrupcao
-		//imp_user = 1;
-	//}
+			}
+			else {
+				i = j = 0;
+				clear_e_cont_txie_pc;
+				txCount = 0;
+			}
+		}
+	}//else => txCount = 2; , transmitir conforme o id!
+	/*else {
+		//imp_user = 1; e depois zera imp_user tx_uart_USER_via_RTI nao bloqueante
+	}*/
 }//interrupcao TX
 
 #pragma vector=USCIAB0RX_VECTOR
 __interrupt void USCI0RX_ISR(void){
-	//aplicaçao de escrita na memoria
-	break_condicao = UCA0STAT & UCBRK;
-	unsigned char dado;	dado = UCA0RXBUF;//leitura do dado recebido na UART RX
-	unsigned char retorno = escreve_endereco(dado);//Se estritamente necessário, escreve no endereço
-	if (retorno == 247) __bic_SR_register_on_exit(LPM0_bits);//só vai se deixar aqui
+	static byte ordem = 0; static byte buffer_rx[6];//sem inicializacao mesmo
 
-	//comandos r, s, p: Reset, String TESTE, Pausa a CPU do MSP
-	if (!retorno){//se não estiver ocupada a recepção com o recebimento dos bytes de escrita na memória, receba os comandos do INFERIOR_DIREITO
-		if (dado == 'r')// 'r' reseta por software a gerar o reset PUC por error de senha do WDT
+	if(UCA0STAT & UCBRK) {//detectou o break gerado pelo C#?
+		UCA0STAT &= ~UCBRK; ordem = 1; buffer_rx[1] = UCA0RXBUF - 2;//valor sentinela para aguardar receber o segundo RxData, i.e, a qtd de argumentos
+	} else if (ordem){//if estado qualquer valor diferente de zero
+		buffer_rx[ordem - 1] = UCA0RXBUF;//armazena cada dado no buffer //0: CMD, 1: QTD_dados: 2 a varios dados: os dados ou nao	//244,      1: 1
+
+		if ( buffer_rx[1] == (ordem - 2) ){//recebeu todos os parametros?  buffer_rx[0]=>CMD e buffer_rx[1]=> a QTD de argumentos //decodificar o comando que está no buffer
+			#define end16   ((unsigned int)(buffer_rx[2 + 1] << 8) + (unsigned int)buffer_rx[2])
+			switch(buffer_rx[0]){//qual comando? e faça o que tem que ser feito para o comando
+			case 251://comando write no "indice" da tabela do C#
+				write_ind(buffer_rx[2], buffer_rx[2 + 1]);//*(vetor_ptr[indice]) = valor;
+				break;
+			case 190://BITSET, //BITCLEAR, BITINV respectivamente
+			case 191:
+			case 192://comandos 190 a 192 de TRÊS argumentos://indice (baixo), indice_alto, valor
+				if (buffer_rx[0] == 190) 		*(byte*)end16 |= buffer_rx[2 + 2];//setar
+				else if (buffer_rx[0] == 191) 	*(byte*)end16 &= ~buffer_rx[2 + 2];//limpar
+				else 							*(byte*)end16 ^= buffer_rx[2 + 2];//inverter
+				break;
+			case 193: aloc_addr((MEM) end16,  buffer_rx[2 + 2]); break;
+			case 194: obter_inds(0); break;
+			case 247: __bic_SR_register_on_exit(LPM0_bits); break;//despausa a main //RUN
+			case 246: __bis_SR_register_on_exit(LPM0_bits); break;//pausar //pausa a main o
+			case 245: WDTCTL = 0; 							break;//Resetar por PUC
+			}//switch buffer_rx[0]
+
+			ordem = 255; //feito? então retorne 2, mas colocando o estado em zero
+		}//else if buffer_re == estado - 2
+		
+		ordem++;//avanca ordem do dado ou o dado vai para zero caso tiver executado o CMD que tiver de fazer
+	} else
+		
+	{//Recepcao do usuario. comandos r, s, p: Reset, String TESTE, Pausa a CPU do MSP
+		if (UCA0RXBUF == 'r')// 'r' reseta por software a gerar o reset PUC por error de senha do WDT
 			WDTCTL = 0;
 
-		if (dado == 's'){// 's' imprime a string TESTE para ver se imprime em qualquer tempo aleatorio desejado, ok
+		if (UCA0RXBUF == 's'){// 's' imprime a string TESTE para ver se imprime em qualquer tempo aleatorio desejado, ok
 			imprima_gerenciador(msg);//imprime a mensagem de TESTE
 			_bic_SR_register_on_exit(LPM0_bits);//despausa a main     LPM0_EXIT     //_bis_SR_register_on_exit(LPM0 + GIE);
 		}
 
-		if (dado == 'p'){// mudando o valor da porta para ver, ok
-			P3OUT = P3IN + (1 << 5);//__bis_SR_register_on_exit(LPM0);
-			__bis_SR_register_on_exit(LPM0_bits );//pausa a main ou     sem | GIE da o mesmo efeito. Faz sentido, pois só seta o CPUOFF
+		if (UCA0RXBUF == 'p'){// mudando o valor da porta para ver, ok
+			P3OUT = P3IN + (1 << 5);
+			__bis_SR_register_on_exit(LPM0_bits );//pausa a main
 		}
 	}
-
+	
 }//RTI RX
 
-/*
- //fila_msgs[qtd++] = msg;//fila_msgs
- //if (qtd_itens_fila > 3) {pc = "ERROR_FILA_CHEIA\r\n"; qtd = 3;}
- * */
