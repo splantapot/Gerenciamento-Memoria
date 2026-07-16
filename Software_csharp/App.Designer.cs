@@ -243,7 +243,7 @@
             this.labelAlert.AutoSize = true;
             this.labelAlert.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelAlert.ForeColor = System.Drawing.Color.OrangeRed;
-            this.labelAlert.Location = new System.Drawing.Point(32, 19);
+            this.labelAlert.Location = new System.Drawing.Point(32, 18);
             this.labelAlert.Name = "labelAlert";
             this.labelAlert.Size = new System.Drawing.Size(198, 13);
             this.labelAlert.TabIndex = 21;
@@ -349,7 +349,7 @@
             // 
             // btnAddNRows
             // 
-            this.btnAddNRows.Location = new System.Drawing.Point(132, 4);
+            this.btnAddNRows.Location = new System.Drawing.Point(133, 4);
             this.btnAddNRows.Name = "btnAddNRows";
             this.btnAddNRows.Size = new System.Drawing.Size(45, 30);
             this.btnAddNRows.TabIndex = 9;

@@ -1,0 +1,53 @@
+﻿{
+  "version": "1.0",
+  "description": "Configuração de Microcontroladores",
+  "microcontrollers": [
+    {
+      "name": "MSP430G2553",
+      "architectureBits": 16,
+      "modules": [
+        {
+          "name": "Special Function",
+          "code": "sfr",
+          "registers": [
+            {
+              "name": "IE1",
+              "address": 0
+            },
+            {
+              "name": "IFG1",
+              "address": 2
+            }
+          ]
+        },
+        {
+          "name": "Ports 10 and 20",
+          "code": "p12",
+          "registers": [
+            {
+              "name": "P1IN",
+              "address": 1,
+              "bits": 16
+            },
+            {
+              "name": "P1OUT",
+              "address": 18,
+              "bits": 16
+            }
+          ]
+        },
+        {
+          "name": "Watchdog Timer",
+          "code": "wdt",
+          "registers": [
+            {
+              "name": "WDTCTL",
+              "address": 26880,
+              "bits": 16
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

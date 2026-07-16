@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 namespace gerenciamento_memoria.classes {
     public class Module {
         public string Name { get; set; }
-        public string ModuleID { get; set; }
+        public string Code { get; set; }
         public List<Register> Registers { get; set; }
-        public Module(string name, string nameId) {
+        public Module(string name, string code) {
             Name = name;
-            ModuleID = nameId;
+            Code = code;
             Registers = new List<Register>();
         }
 

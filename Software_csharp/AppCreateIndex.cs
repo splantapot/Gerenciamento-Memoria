@@ -6,6 +6,8 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.SqlTypes;
 using System.Drawing;
+using System.IO;
+using System.Text.Json;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -44,7 +46,15 @@ namespace gerenciamento_memoria {
                 this.Size = new Size(530, 200);
             } else {
 
-                AppRegisters_DevData();
+                string jsonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "registers.json");
+
+                if (File.Exists(jsonPath)) {
+                    AppRegisters_FromJson(jsonPath);
+                } else {
+                    MessageBox.Show("O arquivo .json de importaçao não foi encontrado.\nVerifique se o arquivo 'registers.json' está no mesmo diretório deste '.exe'.\nOs dados pré-configurados serão carregados.");
+                    AppRegisters_DevData();
+                }
+
                 EnableEditing();
 
                 // Settings for the Registers treeview.
@@ -145,7 +155,7 @@ namespace gerenciamento_memoria {
 
                     if (ENABLE_EDITING) {
                         TreeNode newRegisterNode = moduleNode.Nodes.Add(NEW_REGISTER_NODE_TEXT);
-                        newRegisterNode.Tag = $"{module.ModuleID}:{NEW_REGISTER_NODE_TAG}";
+                        newRegisterNode.Tag = $"{module.Code}:{NEW_REGISTER_NODE_TAG}";
                     }
                 }
 
@@ -196,7 +206,7 @@ namespace gerenciamento_memoria {
 
         private void AddRegisterToModule(string moduleID) {
             Register newReg = new Register(NEW_REGISTER_NAME);
-            Microcontroller micro = microcontrollers.FirstOrDefault(m => m.Modules.Any(mod => mod.ModuleID == moduleID));
+            Microcontroller micro = microcontrollers.FirstOrDefault(m => m.Modules.Any(mod => mod.Code == moduleID));
             if (micro != null) {
                 Module module = micro.GetModuleByModuleID(moduleID);
                 if (module != null) {
@@ -487,7 +497,7 @@ namespace gerenciamento_memoria {
                 textboxProp1.Text = module.Name;
                 labelProp1.Visible = textboxProp1.Visible = true;
                 labelProp2.Text = "ID:";
-                textboxProp2.Text = module.ModuleID;
+                textboxProp2.Text = module.Code;
                 labelProp2.Visible = textboxProp2.Visible = true;
             } else if (IsMicrocontrollerNode(node) && node.Tag is Microcontroller micro) {
                 labelPropType.Text = "Microcontrolador";
@@ -549,6 +559,69 @@ namespace gerenciamento_memoria {
 
         private void btnCancel_Click(object sender, EventArgs e) {
             Close();
+        }
+
+        private void AppRegisters_FromJson(string filePath) {
+            try {
+                string jsonString = File.ReadAllText(filePath);
+
+                var options = new JsonSerializerOptions {
+                    PropertyNameCaseInsensitive = true
+                };
+
+                JsonRoot data = JsonSerializer.Deserialize<JsonRoot>(jsonString, options);
+
+                if (data?.Microcontrollers == null) return;
+
+                foreach (var microDto in data.Microcontrollers) {
+                    if (string.IsNullOrWhiteSpace(microDto.Name) || microDto.ArchitectureBits <= 0) {
+                        Console.WriteLine("Aviso: Ignorando microcontrolador inválido no JSON.");
+                        continue;
+                    }
+
+                    List<Module> modules = new List<Module>();
+                    Microcontroller micro = new Microcontroller(
+                        microDto.Name,
+                        modules: modules,
+                        architectureBits: microDto.ArchitectureBits
+                    );
+
+                    if (microDto.Modules == null) continue;
+
+                    foreach (var modDto in microDto.Modules) {
+                        if (string.IsNullOrWhiteSpace(modDto.Name) || string.IsNullOrWhiteSpace(modDto.Code)) {
+                            Console.WriteLine($"Aviso: Ignorando módulo inválido no microcontrolador {micro.Name}.");
+                            continue;
+                        }
+
+                        Module module = new Module(modDto.Name, modDto.Code);
+                        if (modDto.Registers != null) {
+                            foreach (var regDto in modDto.Registers) {
+                                if (string.IsNullOrWhiteSpace(regDto.Name) || regDto.Address < 0) {
+                                    Console.WriteLine($"Aviso: Ignorando registrador inválido no módulo {module.Name}.");
+                                    continue;
+                                }
+                                int regBits = regDto.Bits > 0 ? regDto.Bits : micro.ArchitectureBits;
+                                Register register = new Register(regDto.Name, regDto.Address, regBits);
+                                module.AddRegister(register);
+                            }
+                        }
+
+                        modules.Add(module);
+                    }
+
+                    microcontrollers.Add(micro);
+                }
+            } catch (FileNotFoundException) {
+                Console.WriteLine($"Erro: O arquivo '{filePath}' não foi encontrado. Carregando dados padrão...");
+                AppRegisters_DevData(); // Fallback de segurança
+            } catch (JsonException ex) {
+                Console.WriteLine($"Erro crítico de sintaxe no JSON: {ex.Message}. Carregando dados padrão...");
+                AppRegisters_DevData(); // Fallback de segurança
+            } catch (Exception ex) {
+                // Captura qualquer outro erro inesperado (ex: falta de permissão de leitura do arquivo)
+                Console.WriteLine($"Erro inesperado ao carregar dados: {ex.Message}");
+            }
         }
     }
 }

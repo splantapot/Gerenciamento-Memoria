@@ -36,7 +36,7 @@ namespace gerenciamento_memoria.classes {
         }
 
         public Module GetModuleByModuleID(string moduleID) {
-            return Modules.FirstOrDefault(m => m.ModuleID == moduleID);
+            return Modules.FirstOrDefault(m => m.Code == moduleID);
         }
     }
 }
