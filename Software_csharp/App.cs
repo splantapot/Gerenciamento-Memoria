@@ -32,7 +32,6 @@ namespace gerenciamento_memoria {
         private int raw_counter = 0;
         private int dump_counter = 0;
         private STATE reading_state = STATE.DONE;
-        bool isWaitingAlocSize = false;
 
         public void InitRawBuffer(int size) {
             qntRaws = size;
@@ -137,8 +136,7 @@ namespace gerenciamento_memoria {
                     if (v == Communication.dummyByte) {
                         // Receive 'U'
                         reading_state = STATE.WAITING_ID;
-                    }
-                    else {
+                    } else {
                         // Start the buffer for UserMsg (Header Failure)
                         str_buffer = ((char)v).ToString();
                         reading_state = STATE.USER_STRING;
@@ -174,8 +172,7 @@ namespace gerenciamento_memoria {
                         str_buffer += (char)v;
                         RenderStrBuffer(reading_state == STATE.USER_STRING);
                         reading_state = STATE.DONE;
-                    }
-                    else {
+                    } else {
                         str_buffer += (char)v;
                     }
                     break;
@@ -241,8 +238,9 @@ namespace gerenciamento_memoria {
             }
 
             // Show alert for dump in user box
+            bool hasDumpInStr = VerifyTrashInStr(str_ready);
             if (!labelAlert.Visible) {
-                if (VerifyTrashInStr(str_ready)) dump_counter++;
+                if (hasDumpInStr) dump_counter++;
                 labelAlert.Visible = dump_counter >= 10;
             }
 
@@ -707,7 +705,6 @@ namespace gerenciamento_memoria {
         private void btnGetN_Click(object sender, EventArgs e) {
             labelAlert.Visible = false;
             dump_counter = 0;
-            reading_state = STATE.DONE;
             //RenderStrBuffer();
             //RenderRawBuffer();
             WriteCmdToMicro(194, 0);
