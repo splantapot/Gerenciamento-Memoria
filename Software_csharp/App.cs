@@ -349,7 +349,7 @@ namespace gerenciamento_memoria {
             int row = e.RowIndex;
             byte index = (byte) _getRowIndex(row);
             byte value = (byte) _getRowValue(row);
-            if (value >= 0 && index >= 0 && index < 4) {
+            if (value >= 0 && index >= 0 && index < qntRaws) {
                 // COMMAND 251: Write value in index from array
                 WriteCmdToMicro(251, 2, index, value);
                 _clearRowWrite(row);

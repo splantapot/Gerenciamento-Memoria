@@ -12,7 +12,8 @@
           "registers": [
             {
               "name": "IE1",
-              "address": 0
+              "address": 0,
+              "bits": 8
             },
             {
               "name": "IFG1",
@@ -27,12 +28,12 @@
             {
               "name": "P1IN",
               "address": 1,
-              "bits": 16
+              "bits": 8
             },
             {
               "name": "P1OUT",
               "address": 18,
-              "bits": 16
+              "bits": 8
             }
           ]
         },
