@@ -165,7 +165,6 @@ namespace gerenciamento_memoria {
             // Renderer for Selected treeview. ------------------------
             treeviewSelected.Nodes.Clear();
             selected_registers.ForEach(register => {
-
                 TreeNode registerNode = treeviewSelected.Nodes.Add(
                     $"{register.Name} (0x{register.Address:X})"
                 );

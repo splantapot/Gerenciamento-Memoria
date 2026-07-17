@@ -38,7 +38,10 @@ namespace gerenciamento_memoria {
         private int raw_counter = 0;
         private int dump_counter = 0;
         private STATE reading_state = STATE.DONE;
+
         private bool isSynch = false;
+        private bool isAddingRegister = false;
+        private bool successRegister = false;
 
         public void InitRawBuffer(int size) {
             qntRaws = size;
@@ -238,6 +241,12 @@ namespace gerenciamento_memoria {
                 Console.WriteLine(newSize);
                 InitRawBuffer(newSize);
                 isSynch = false;    // Ok, done synch
+                isAddingRegister = false;
+            } else if (str_ready.Contains("Error_aloc_memoria")) {
+                isSynch = false;         // PARA o while do botão imediatamente!
+                isAddingRegister = false;
+                successRegister = false; // Sinaliza falha para a janela anterior
+                Console.WriteLine($"[FALHA MICROCONTROLADOR] Recebido: {str_ready.Trim()}");
             } else if (isSynch) {
                 Console.WriteLine($"[Tentativa Synch Falhou] Recebido: {str_ready.Replace("\n", "\\n")}");
             }
@@ -326,7 +335,7 @@ namespace gerenciamento_memoria {
         /* ====================================  */
 
         private void btnAddRow_Click(object sender, EventArgs e) {
-            dataGrid.Rows.Add("x", "?", "?");
+            dataGrid.Rows.Add("x", "", "?", "?");
         }
 
         private void btnAddNRows_Click(object sender, EventArgs e) {
@@ -338,7 +347,7 @@ namespace gerenciamento_memoria {
             }
             if (lastIndex > 0) lastIndex++;
             for (int i = 0; i < 5; i++) {
-                dataGrid.Rows.Add((i + lastIndex).ToString(), "?", "?");
+                dataGrid.Rows.Add((i + lastIndex).ToString(), "", "?", "?");
             }
         }
 
@@ -399,6 +408,7 @@ namespace gerenciamento_memoria {
             WriteCmdToMicro(245, 0);
             AddComandToLog($"RESET PUC");
         }
+
         private void btnPause_Click(object sender, EventArgs e) {
             WriteCmdToMicro(246, 0);
             AddComandToLog($"PAUSE");
@@ -701,19 +711,94 @@ namespace gerenciamento_memoria {
                 int qnt_bits = register.Bits;
                 int qnt_bytes = qnt_bits / 8;
                 int address = register.Address;
+                Console.WriteLine($"Comando 193:: {register.Name} || {register.Bits}");
                 WriteCmdToMicro(193, 3, (byte)(address % 256), (byte)(address >> 8), (byte)qnt_bytes);
             }
         }
 
-        private void btnAddIdx_Click(object sender, EventArgs e) {
-            using (AppCreateIndex registersDialog = new AppCreateIndex()) {
-                if (registersDialog.ShowDialog() == DialogResult.OK) {
-                    registersDialog.selected_registers.ForEach(register => {
-                        Run193(register);
-                    });
-                }
+        private void Run194(Register register) {
+            if (register != null && !isAddingRegister) {
+                Console.WriteLine($"Comando 194:: {register.Name} || {register.Bits}");
+                int address = register.Address;
+                WriteCmdToMicro(193, 3, (byte)(address % 256), (byte)(address >> 8));
             }
         }
+
+        private async void btnAddIdx_Click(object sender, EventArgs e) {
+            // TODO
+            /*
+            using (AppCreateIndex registersDialog = new AppCreateIndex()) {
+                if (registersDialog.ShowDialog() == DialogResult.OK) {
+                    bool canAddRegister = true;
+                    List<Register> failure_registers = new List<Register>();
+
+                    // Instancia a janela de carregamento
+                    FormAguarde aguardeDialog = new FormAguarde();
+                    // Abre centralizado em relação ao formulário principal (this)
+                    aguardeDialog.Show(this);
+                    // Desativa a tela principal temporariamente para o usuário não clicar em nada atrás
+                    this.Enabled = false;
+
+                    try {
+                        foreach (var register in registersDialog.selected_registers) {
+                            if (canAddRegister) {
+                                // Atualiza a janelinha informando o progresso atual
+                                aguardeDialog.AtualizarTexto($"Alocando: {register.Name}...");
+
+                                isAddingRegister = true;
+                                successRegister = true;
+
+                                if (register.Bits > 8) {
+                                    Run194(register);
+                                } else {
+                                    Run193(register);
+                                }
+
+                                while (isAddingRegister) {
+                                    await Task.Delay(100);
+                                }
+
+                                if (!successRegister) {
+                                    canAddRegister = false;
+                                    failure_registers.Add(register);
+                                }
+                            } else {
+                                failure_registers.Add(register);
+                            }
+                        }
+                    } finally {
+                        // O bloco finally garante que, mesmo se o código der erro, 
+                        // a janelinha fecha e o seu programa principal volta a funcionar
+                        aguardeDialog.Close();
+                        aguardeDialog.Dispose();
+                        this.Enabled = true; // Reativa a janela principal
+                        this.Focus();
+                    }
+
+                    // EXIBIÇÃO DOS RESULTADOS (Agora com a tela limpa)
+                    if (failure_registers.Count > 0) {
+                        string nomesFalhas = string.Join("\n- ", failure_registers.Select(r => r.Name));
+
+                        MessageBox.Show(
+                            $"Falha na alocação de memória no microcontrolador!\n\n" +
+                            $"Os seguintes registradores NÃO foram alocados:\n- {nomesFalhas}",
+                            "Erro de Alocação",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error
+                        );
+                    } else {
+                        MessageBox.Show(
+                            "Todos os registradores foram alocados com sucesso no microcontrolador!",
+                            "Sucesso",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information
+                        );
+                    }
+                }
+            }
+            */
+        }
+
 
         private void btnAddEnd_Click(object sender, EventArgs e) {
             using (AppCreateIndex registersDialog = new AppCreateIndex(true)) {
@@ -773,22 +858,9 @@ namespace gerenciamento_memoria {
         /* ====================================  */
 
         private void App_Resize(object sender, EventArgs e) {
-            Console.WriteLine(this.Width);
             if (dataGrid.Columns.Count > 0) {
-                if (this.Width < 800) {
-                    colName.Visible = false;
-                } else {
-                    colName.Visible = true;
-                }
-                // Altere o índice [0] para o número da coluna que deseja modificar
-                // Usamos a largura do Form (this.Width), mas você também pode usar a do Grid (dataGridView1.Width)
-                //if (this.Width < 600) {
-                //    dataGridView1.Columns[0].HeaderText = "Qtd"; // Nome curto para telas pequenas
-                //} else if (this.Width >= 600 && this.Width < 1000) {
-                //    dataGridView1.Columns[0].HeaderText = "Quantidade"; // Nome médio
-                //} else {
-                //    dataGridView1.Columns[0].HeaderText = "Quantidade de Registros"; // Nome completo para Fullscreen
-                //}
+                colName.Visible = this.Width >= 800;
+                colIndexes.HeaderText = this.Width < 1050 ? "Idx" : "Índices";
             }
         }
     }
