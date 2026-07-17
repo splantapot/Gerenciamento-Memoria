@@ -14,6 +14,7 @@ using System.Runtime.ExceptionServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -22,6 +23,11 @@ namespace gerenciamento_memoria {
 
         public Communication com;               // Object that handles a communication
         private string selected_port = null;    // Default port, data_list and 
+
+        enum GRID_EXIB {
+            HEX, HEX0, BIN
+        }
+        private GRID_EXIB grid_mode = GRID_EXIB.HEX;
 
         private string str_buffer = "";
         private string str_ready = "";
@@ -32,6 +38,7 @@ namespace gerenciamento_memoria {
         private int raw_counter = 0;
         private int dump_counter = 0;
         private STATE reading_state = STATE.DONE;
+        private bool isSynch = false;
 
         public void InitRawBuffer(int size) {
             qntRaws = size;
@@ -230,11 +237,14 @@ namespace gerenciamento_memoria {
             }
             str_ready = str_buffer;
 
-            var match = System.Text.RegularExpressions.Regex.Match(str_ready, @"^ao(\d{3})\n$");
+            var match = System.Text.RegularExpressions.Regex.Match(str_ready, @"ao(\d{3})\n");
             if (match.Success) {
                 int newSize = Convert.ToInt32(match.Groups[1].Value, 10);
                 Console.WriteLine(newSize);
                 InitRawBuffer(newSize);
+                isSynch = false;    // Ok, done synch
+            } else if (isSynch) {
+                Console.WriteLine($"[Tentativa Synch Falhou] Recebido: {str_ready.Replace("\n", "\\n")}");
             }
 
             // Show alert for dump in user box
@@ -283,7 +293,22 @@ namespace gerenciamento_memoria {
                 // ix rhex rdec whex wdec
                 int ix = _getRowIndex(row);
                 try {
-                    string new_formatted_value = radbtnHex.Checked ? raw_ready[ix].ToString("X") : Convert.ToString(raw_ready[ix], 2).PadLeft(8, '0').Insert(4, " "); ;
+
+                    string new_formatted_value;
+                    switch (grid_mode) {
+                        case GRID_EXIB.BIN:
+                            new_formatted_value = Convert.ToString(raw_ready[ix], 2).PadLeft(8, '0').Insert(4, " ");
+                            break;
+
+                        default:
+                        case GRID_EXIB.HEX:
+                            new_formatted_value = raw_ready[ix].ToString("X");
+                            break;
+                        case GRID_EXIB.HEX0:
+                            new_formatted_value = raw_ready[ix].ToString("X").PadLeft(2, '0');
+                            break;
+                    }
+
                     dataGrid.Rows[row].Cells[1].Value = new_formatted_value;            //Hex or Bin
                     dataGrid.Rows[row].Cells[2].Value = raw_ready[ix];                  //Dec
                 }
@@ -311,8 +336,15 @@ namespace gerenciamento_memoria {
         }
 
         private void btnAddNRows_Click(object sender, EventArgs e) {
+            int lastIndex = 0;
+            foreach (DataGridViewRow row in dataGrid.Rows) {
+                string value = row.Cells[0].Value.ToString();
+                if (string.IsNullOrEmpty(value) || !int.TryParse(value, out int index)) continue;
+                if (index > lastIndex) lastIndex = index;
+            }
+            if (lastIndex > 0) lastIndex++;
             for (int i = 0; i < 5; i++) {
-                dataGrid.Rows.Add(i.ToString(), "?", "?");
+                dataGrid.Rows.Add((i+lastIndex).ToString(), "?", "?");
             }
         }
 
@@ -467,7 +499,7 @@ namespace gerenciamento_memoria {
                 selected_port = null;
             }
         }
-
+        
         // Update the PortBox every time that a device is detected.
         protected override void WndProc(ref Message m) {
             base.WndProc(ref m);
@@ -500,7 +532,17 @@ namespace gerenciamento_memoria {
                 this.Invoke(new Action(() => UpdateColumnName()));
                 return;
             }
-            colReadHex.HeaderText = (radbtnHex.Checked) ? "Hex" : "Bin";
+            switch (grid_mode) {
+                case GRID_EXIB.BIN:
+                    colReadHex.HeaderText = "Bin";
+                    break;
+                case GRID_EXIB.HEX:
+                    colReadHex.HeaderText = "Hex";
+                    break;
+                case GRID_EXIB.HEX0:
+                    colReadHex.HeaderText = "Hex";
+                    break;
+            }
         }
 
         /* ====================================  */
@@ -648,10 +690,17 @@ namespace gerenciamento_memoria {
         }
 
         private void radbtnHex_CheckedChanged(object sender, EventArgs e) {
+            grid_mode = GRID_EXIB.HEX;
+            UpdateColumnName();
+        }
+
+        private void radbtnHex0_CheckedChanged(object sender, EventArgs e) {
+            grid_mode = GRID_EXIB.HEX0;
             UpdateColumnName();
         }
 
         private void radbtnBin_CheckedChanged(object sender, EventArgs e) {
+            grid_mode = GRID_EXIB.BIN;
             UpdateColumnName();
         }
 
@@ -702,12 +751,30 @@ namespace gerenciamento_memoria {
             return propDump > maxDumpPercent;
         }
 
-        private void btnGetN_Click(object sender, EventArgs e) {
+        private async void btnSynch_Click(object sender, EventArgs e) {
+            if (isSynch) return;
+
             labelAlert.Visible = false;
             dump_counter = 0;
-            //RenderStrBuffer();
-            //RenderRawBuffer();
-            WriteCmdToMicro(194, 0);
+            AddComandToLog("SYNCH");
+
+            isSynch = true;
+
+            btnSynch.Text = "Sincronizando...";
+            btnSynch.BackColor = Color.FromArgb(200, 255, 200);
+            btnSynch.ForeColor = Color.DarkGreen;
+            btnSynch.Cursor = Cursors.WaitCursor;
+
+            while (isSynch) {
+                WriteCmdToMicro(195, 0);
+                await Task.Delay(750);
+            }
+
+            btnSynch.Text = "SINCRONIZAR";
+            btnSynch.BackColor = SystemColors.Control;
+            btnSynch.ForeColor = SystemColors.ControlText;
+            btnSynch.Cursor = Cursors.Default;
         }
+
     }
 }

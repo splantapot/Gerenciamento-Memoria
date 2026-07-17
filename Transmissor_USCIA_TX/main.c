@@ -1,129 +1,110 @@
+//para a versão 1 do Software C:\Users\evert\workspace_v5_5\Transmissor_USCIA_TX
 #include <msp430.h>
-#define tp BIT3 //transistor bc639 de programa��o
-#define tu BIT4 //transistor bc337 de utiliza��o
-#define teste2
-#ifdef teste1
-const char string1[] = { "Everton\r\n" };//tem que ser \r\n nessa sequencia
-#endif
-#ifdef teste2
-char string1[8]; //const char string1[] = { "Everton\r\n" };//tem que ser \r\n nessa sequencia
-#endif
-volatile unsigned char* pc = 0;// aponta para ninguem
-unsigned int i = 0; char j = 0;
+#include <Temporizador.h>
+#include "gerenciador_memoria.h"
 
-char* str = "ola, bom dia";
-void imprima(char* ptr_C);
-int main(void){
-  //string1[7] = '\0';
-  WDTCTL = WDTPW + WDTHOLD;                 // Stop WDT
-  DCOCTL = 60;   BCSCTL1 = 135; 			//calibrado para 1 MHz
-  P1DIR = 0xFF;                             // All P1.x outputs
-  P1OUT = 0;                                // All P1.x reset
-  P2DIR = 0xFF;                             // All P2.x outputs
-  P2OUT = 0;                                // All P2.x reset
-  P1SEL = BIT1 + BIT2;                     // P1.1 = RXD, P1.2=TXD
-  P1SEL2 = BIT1 + BIT2;                     // P1.1 = RXD, P1.2=TXD
-  P3DIR = 0xFF;                             // All P3.x outputs
-  P3OUT = 0;                                // All P3.x reset
+void setup_hardware();
 
-  P1REN = 0xFF; P2REN = 0xFF; P3REN = 0xFF;
-  P3OUT |= BIT0;  P2OUT &= ~BIT0;
-  //configura��o dos pinos para chaveamento
-  	P1DIR &= ~BIT5;          //entrada
-  	P1REN &= ~(BIT5 + BIT2); //sem resistor
-  	P1REN |= BIT1;  //<<<<<<<<<habilita resistor de pullup no pino RX do msp<<<<<<<<<<<<<
-  	P1DIR |= tp + tu;//sa�da
-  	P1REN &= ~tp;	    //sem resistor
-  	P1OUT &= ~tp;	    //nivel baixo para permitir a aplica�ao Rx/Tx do usuario
-  	P1REN |= tu;	    //resistor on
-  	P1OUT |= tu;
+int main(void) {
+	setup_hardware();//watchdog, pinos, etc...
 
-  UCA0CTL1 |= UCSSEL_2;                     // SMCLK
-  /*UCA0BR0 = 104;                            // 1MHz 9600
-  UCA0BR1 = 0;                              // 1MHz 9600
-  UCA0MCTL = UCBRS0;*/                        // Modulation UCBRSx = 1
+	imprima_gerenciador("Resetado\n");
+	LPM0;//pausa por LPM
+	imprima_gerenciador("Running...\n");
+	Temporizador t; inicializa_temporizador(100, &t);
 
-  UCA0BR0 = 26;//38400 , d� erro repetindo o primeiro caracter a 76800
-  UCA0BR1 = 0;
-  UCA0MCTL = 0;
+	byte vetor_teste[] = {8, 9};//, 3, 4};
 
-  UCA0CTL1 &= ~UCSWRST;                     // **Initialize USCI state machine**
-  IE2 |= UCA0RXIE;                          // Enable USCI_A0 RX interrupt
+	TA0CTL = 0x0301;//teste de inicialização do registrador de 16 bits
 
-  __bis_SR_register(/*LPM3_bits*/ + GIE);       // Enter LPM3 w/ int until Byte RXed
-  char cont = 0;
+	aloc_addr(&P3OUT, 1);//interessante o uso do sizeof, que informa certo o tamanho do registrador em bytes
+	aloc_addr(vetor_teste, sizeof(vetor_teste));
+	aloc_addr(&svt, 1);//svt = 3 nesse caso
 
+	//alocação de registrador sempre por último na tabela para facilitar
+	aloc_reg(&TA0CTL); //0x0301 esperado
+	aloc_reg(&TA1CTL); //0x0221 esperado
 
-  while(1){
-	  P1OUT ^= BIT0;
-	  volatile unsigned int j=65000;
-	  while(j--);
+	char cont = 0;//contador para dar uma base de tempo para alternar entre opcoes automaticamente
+	while (1) {
+		if (passou_tempo(&t)) {//tempo de 1 segundo
+			reseta_temporizador(&t);
+			P1OUT ^= BIT0;
+			switch (cont) {
+			case 0:
+				imprima_gerenciador("Ex Timeout\n");
+				break;
+			case 1:
+				imprima_user("TESTANDO O ENVIO PELA FUNCAO IMPRIMA_USER\n");
+				break;
+			case 2:
+				imprima_user("0\n");
+				imprima_user("from user\n");
+				break;
+			case 3://bp(0); BREAKPOINT(0)
+			{
+				char v[3] = {1 + 48,'\n','\0'};//vetor de mensagem de ponto de breakpoint para a versão 2
+				imprima_gerenciador(v);
+				break;
+			}
+			case 4:
+				 imprima_user("Sou usuario\n");
+				 vetor_teste[0] += 1;
+				 vetor_teste[1] += 10;
+				 break;
+			}//switch
+			cont++; cont %= 5;
+		} //passou tempo
+	}//while 1
+}//main
 
-	  switch (cont) {
-	  case 0:
-		  imprima("Bem-vindo\r\n"); //pc = str;
-		  break;
-	  case 1:
-		  imprima("Hoje\r\n");
-		  break;
-	  case 2:
-		  imprima("BOM\r\n");
-			break;
-		case 3:
-			imprima("Perfeito\r\n");
-			break;
-		//default:
-	  }
+void setup_hardware(){
+	#define tp BIT3 //transistor bc639 de programação //para uso dos pinos RX e TX e gravacao sem precisar mudar a posição nos pinos
+	#define tu BIT4 //transistor bc337 de utilização
+	WDTCTL = WDTPW + WDTHOLD;
+	DCOCTL = 68;
+	BCSCTL1 = 135;  			//calibrado para 1 MHz
+	P1DIR = 0xFF;               // All P1.x outputs
+	P1OUT = 0;                  // All P1.x reset
+	P2DIR = 0xFF;               // All P2.x outputs
+	P2OUT = 0;                  // All P2.x reset
+	P1SEL = BIT1 + BIT2;        // P1.1 = RXD, P1.2=TXD
+	P1SEL2 = BIT1 + BIT2;       // P1.1 = RXD, P1.2=TXD
+	P3DIR = 0xFF;               // All P3.x outputs
+	P3OUT = 0;                  // All P3.x reset
+	setup_tick(TEMPO_TICK);
 
-	  cont++;
-	  cont %= 4;
-  }
+	P1REN = 0xFF;
+	P2REN = 0xFF;
+	P3REN = 0xF7;                                //p3.3 resistor desativado
+	P3OUT |= BIT0;	P2OUT &= ~BIT0; //para colocar os leds indicadores de niveis
+	//configuração dos pinos para chaveamento
+	P1DIR &= ~BIT5;          //entrada
+	P1REN &= ~(BIT5 + BIT2); //sem resistor  <<<??? tp também?
+	P1REN |= BIT1; //<<<<<<<<<habilita resistor de pullup no pino RX do msp<<<<<<<<<<<<<
+	P1DIR |= tp + tu;  //saída
+	P1REN &= ~tp;	    //sem resistor
+	P1OUT &= ~tp;	    //nivel baixo para permitir a aplicaçao Rx/Tx do usuario
+	P1REN |= tu;	    //resistor on
+	P1OUT |= tu | BIT1;
+
+	//UART configuração
+	UCA0CTL1 |= UCSWRST;
+	UCA0CTL1 |= UCSSEL_2 | UCBRKIE;//SMCLK e habilitada a detecção de break!!!!!!!!!!!!!!
+
+	UCA0BR0 = 26;      		//38400 bps OK!!!, mas dá erro repetindo o primeiro caracter a 76800 bps, por que?
+	UCA0BR1 = 0;
+	UCA0MCTL = 0;
+	UCA0CTL1 &= ~UCSWRST;	// **Initialize USCI state machine**
+	IE2 |= UCA0RXIE;		// Enable USCI_A0 RX interrupt
+
+	__bis_SR_register(GIE);
 }
-
-void imprima(char* ptr_C){
-	pc = ptr_C;
-	P3OUT ^= BIT7;
-	IE2 |= UCA0TXIE;                        // Enable USCI_A0 TX interrupt
-	UCA0TXBUF = *pc++;//string1[i++]; //triga o tx inicial
-}
-
-#pragma vector=USCIAB0TX_VECTOR
-__interrupt void USCI0TX_ISR(void){
-  UCA0TXBUF = *pc++;//string1[i++];                 // TX next character
-
-  if (!(*pc)/*!string1[i]*/)  // == '\0' TX over?  i == sizeof string1
-  {  IE2 &= ~UCA0TXIE;       }                // Disable USCI_A0 TX interrupt
-}
-
-
-#pragma vector=USCIAB0RX_VECTOR
-__interrupt void USCI0RX_ISR(void){
-	if (UCA0RXBUF == 'r'){                     // 'r' received?
-		WDTCTL = 0;
-	}
-}
-
-//P3OUT ^= BIT7;//deon
-	/*
-	string1[j++] = UCA0RXBUF;
-	if (j > sizeof string1 - 1){   //  3  > 2
-		i = j = 0;
-		IE2 |= UCA0TXIE;                        // Enable USCI_A0 TX interrupt
-		UCA0TXBUF = string1[i++];
-	}*/
-
-	/*if (UCA0RXBUF == 'u'){                     // 'u' received?
-		P3OUT ^= BIT7;
-		IE2 |= UCA0TXIE;                        // Enable USCI_A0 TX interrupt
-		//UCA0TXBUF = string1[i++];
-		UCA0TXBUF = *pc++;//string1[i++];
-	}*/
 
 /*
- if (j > sizeof string1 - 1)     3  > 2
- {
-   i = 0;
-   j = 0;
-   IE2 |= UCA0TXIE;                        // Enable USCI_A0 TX interrupt
-   UCA0TXBUF = string1[i++];
- }*/
+ o endereço 0x0161 não é um registrador independente acessível por byte no MSP430G2553.
+Embora anteriormente tenhamos tratado o TA0CTL como um registrador de 16 bits com:
+0x0160 → byte baixo
+0x0161 → byte alto
+isso é uma visão de mapa de memória genérico. Nos periféricos MSP430, o acesso por byte depende de como o módulo foi implementado no silício.
+No caso do Timer_A, o TA0CTL deve ser acessado como um registrador de 16 bits:*/

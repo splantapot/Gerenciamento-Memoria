@@ -23,7 +23,10 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AppCreateIndex));
             this.panelManualCMD = new System.Windows.Forms.Panel();
+            this.textboxBytes = new System.Windows.Forms.TextBox();
+            this.labelBytes = new System.Windows.Forms.Label();
             this.btnAddAddress = new System.Windows.Forms.Button();
             this.labelTitleAddress = new System.Windows.Forms.Label();
             this.textboxAddress = new System.Windows.Forms.TextBox();
@@ -41,8 +44,6 @@
             this.labelProp1 = new System.Windows.Forms.Label();
             this.btnConfirm = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
-            this.labelBytes = new System.Windows.Forms.Label();
-            this.textboxBytes = new System.Windows.Forms.TextBox();
             this.panelMain = new System.Windows.Forms.Panel();
             this.panelManualCMD.SuspendLayout();
             this.panelEdition.SuspendLayout();
@@ -63,6 +64,25 @@
             this.panelManualCMD.Name = "panelManualCMD";
             this.panelManualCMD.Size = new System.Drawing.Size(460, 64);
             this.panelManualCMD.TabIndex = 0;
+            // 
+            // textboxBytes
+            // 
+            this.textboxBytes.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textboxBytes.Location = new System.Drawing.Point(297, 26);
+            this.textboxBytes.Name = "textboxBytes";
+            this.textboxBytes.Size = new System.Drawing.Size(88, 21);
+            this.textboxBytes.TabIndex = 5;
+            this.textboxBytes.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textboxManual_KeyDown);
+            // 
+            // labelBytes
+            // 
+            this.labelBytes.AutoSize = true;
+            this.labelBytes.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelBytes.Location = new System.Drawing.Point(232, 29);
+            this.labelBytes.Name = "labelBytes";
+            this.labelBytes.Size = new System.Drawing.Size(63, 15);
+            this.labelBytes.TabIndex = 4;
+            this.labelBytes.Text = "Qnt. bytes:";
             // 
             // btnAddAddress
             // 
@@ -231,25 +251,6 @@
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
-            // labelBytes
-            // 
-            this.labelBytes.AutoSize = true;
-            this.labelBytes.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelBytes.Location = new System.Drawing.Point(232, 29);
-            this.labelBytes.Name = "labelBytes";
-            this.labelBytes.Size = new System.Drawing.Size(63, 15);
-            this.labelBytes.TabIndex = 4;
-            this.labelBytes.Text = "Qnt. bytes:";
-            // 
-            // textboxBytes
-            // 
-            this.textboxBytes.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textboxBytes.Location = new System.Drawing.Point(297, 26);
-            this.textboxBytes.Name = "textboxBytes";
-            this.textboxBytes.Size = new System.Drawing.Size(88, 21);
-            this.textboxBytes.TabIndex = 5;
-            this.textboxBytes.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textboxManual_KeyDown);
-            // 
             // panelMain
             // 
             this.panelMain.Controls.Add(this.labelTitleSelection);
@@ -272,6 +273,7 @@
             this.Controls.Add(this.panelManualCMD);
             this.Controls.Add(this.panelMain);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "AppCreateIndex";

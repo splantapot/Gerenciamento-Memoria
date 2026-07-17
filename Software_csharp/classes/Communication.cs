@@ -14,8 +14,7 @@ namespace gerenciamento_memoria {
         STRING = 1,
         USER_STRING = 2,
         RAW = 3,
-        WAITING_ID = 4,
-        DUMP = 5
+        WAITING_ID = 4
     }
 
     public class Communication {

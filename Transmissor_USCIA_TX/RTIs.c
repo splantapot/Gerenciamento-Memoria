@@ -32,38 +32,40 @@ __interrupt void TIMER1_A1_ISR_HOOK(void){//RTI do timer E421
 
 #pragma vector=USCIAB0TX_VECTOR
 __interrupt void USCI0TX_ISR(void){	//1) versão com break;
-	static byte i = 0; static byte j = 0;//indices da matriz esparsa
-	static byte txCount = 0;
+	static byte i = 0, j = 0, txCount = 0, n = 0, parteL_H = 0;//i e j indices da matriz esparsa
 
 	//if(e) //para implementacao futura de algo bem interessante
 	if (txCount < 2)//transmitir os dois bytes
 		UCA0TXBUF = (txCount++)? e : 255;//transmite 255 e depois "e"
 	else {//transmitir conforme o ID , i.e, e
-		if (e == 1) {
+		if (e == 1) {//enviar string
 			if (*pc == 0) {
 				IE2 &= ~UCA0TXIE;
-				e = txCount = 0; pc = 0;
+				e = txCount = 0;
 			}
 			else UCA0TXBUF = *pc++;
 		}
-		else if (e == 3) {
-			if (i < svt) {
+		else if (e == 3) {//enviar dados RAWs
+			if (i < svt) {//há dados de vetores para mostrar?
 				UCA0TXBUF = vetor_ptr[i][j];
-				if (j >= vetor_qtd[i]) {
-					j = 0; i++;
-				} else j++;
+				if (j >= vetor_qtd[i]) { j = 0; i++;} else j++;
+			} else if ( n < nreg ){//há registradores de 16 bits para mostrar na tabela?
+				if (parteL_H) { UCA0TXBUF = (byte)( *vetor_reg16[n] & 0x00FF ); n++; }
+				else {UCA0TXBUF  = (byte)( (*vetor_reg16[n] >> 8) & 0x00FF);}
+				parteL_H ^= 1;
 			}
-			else {
-				i = j = 0;
-				clear_e_cont_txie_pc;
-				txCount = 0;
-			}
-		}
+			else {i = j = txCount = parteL_H = n = 0, clear_e_cont_txie;}
+		}//else if (e == 3) //dados RAWs quer seja de 8 bits ou de 16 bits
+
 	}//else => txCount = 2; , transmitir conforme o id!
-	/*else {
+
+	/*else {//Futuro uso
 		//imp_user = 1; e depois zera imp_user tx_uart_USER_via_RTI nao bloqueante
 	}*/
 }//interrupcao TX
+
+/*UCA0TXBUF = parteL_H++?  (unsigned char)((*vetor_reg16[n++] >> 8) & 0x00FF): //parte ALTA
+									   (unsigned char)(*vetor_reg16[n] & 0x00FF);//parte BAIXA*/
 
 #pragma vector=USCIAB0RX_VECTOR
 __interrupt void USCI0RX_ISR(void){
@@ -88,7 +90,8 @@ __interrupt void USCI0RX_ISR(void){
 				else 							*(byte*)end16 ^= buffer_rx[2 + 2];//inverter
 				break;
 			case 193: aloc_addr((MEM) end16,  buffer_rx[2 + 2]); break;
-			case 194: obter_inds(0); break;
+			case 194: aloc_reg((REG16) end16); break;
+			case 195: obter_inds(0); break;
 			case 247: __bic_SR_register_on_exit(LPM0_bits); break;//despausa a main //RUN
 			case 246: __bis_SR_register_on_exit(LPM0_bits); break;//pausar //pausa a main o
 			case 245: WDTCTL = 0; 							break;//Resetar por PUC

@@ -23,6 +23,8 @@
         /// o conteúdo deste método com o editor de código.
         /// </summary>
         private void InitializeComponent() {
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.btnAddRow = new System.Windows.Forms.Button();
             this.panelDatagrid = new System.Windows.Forms.Panel();
             this.splitTop = new System.Windows.Forms.SplitContainer();
@@ -57,6 +59,7 @@
             this.labelConsole = new System.Windows.Forms.Label();
             this.tabctrlCMD = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.btnSynch = new System.Windows.Forms.Button();
             this.btnResetPuc = new System.Windows.Forms.Button();
             this.btnPause = new System.Windows.Forms.Button();
             this.btnRun = new System.Windows.Forms.Button();
@@ -75,7 +78,6 @@
             this.btnSendRX = new System.Windows.Forms.Button();
             this.textboxRX = new System.Windows.Forms.TextBox();
             this.labelRX = new System.Windows.Forms.Label();
-            this.btnGetN = new System.Windows.Forms.Button();
             this.panelDatagrid.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitTop)).BeginInit();
             this.splitTop.Panel1.SuspendLayout();
@@ -181,7 +183,16 @@
             this.dataGrid.AllowUserToResizeRows = false;
             this.dataGrid.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGrid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGrid.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.Raised;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dataGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGrid.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.colIndexes,
@@ -189,6 +200,14 @@
             this.colReadDec,
             this.colWriteHex,
             this.colWriteDec});
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGrid.DefaultCellStyle = dataGridViewCellStyle2;
             this.dataGrid.GridColor = System.Drawing.SystemColors.Control;
             this.dataGrid.Location = new System.Drawing.Point(8, 32);
             this.dataGrid.Name = "dataGrid";
@@ -204,7 +223,6 @@
             // 
             this.colIndexes.HeaderText = "Índices";
             this.colIndexes.Name = "colIndexes";
-            this.colIndexes.Width = 55;
             // 
             // colReadHex
             // 
@@ -214,7 +232,6 @@
             this.colReadHex.ReadOnly = true;
             this.colReadHex.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.colReadHex.ToolTipText = "Ler Hexadecimal";
-            this.colReadHex.Width = 70;
             // 
             // colReadDec
             // 
@@ -222,21 +239,18 @@
             this.colReadDec.Name = "colReadDec";
             this.colReadDec.ReadOnly = true;
             this.colReadDec.ToolTipText = "Ver Decimal";
-            this.colReadDec.Width = 55;
             // 
             // colWriteHex
             // 
             this.colWriteHex.HeaderText = "Hex";
             this.colWriteHex.Name = "colWriteHex";
             this.colWriteHex.ToolTipText = "Escrever Hexadecimal";
-            this.colWriteHex.Width = 55;
             // 
             // colWriteDec
             // 
             this.colWriteDec.HeaderText = "Dec";
             this.colWriteDec.Name = "colWriteDec";
             this.colWriteDec.ToolTipText = "Escrever Decimal";
-            this.colWriteDec.Width = 55;
             // 
             // labelAlert
             // 
@@ -253,7 +267,7 @@
             // btnClearTX
             // 
             this.btnClearTX.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClearTX.Location = new System.Drawing.Point(235, 6);
+            this.btnClearTX.Location = new System.Drawing.Point(231, 6);
             this.btnClearTX.Name = "btnClearTX";
             this.btnClearTX.Size = new System.Drawing.Size(80, 24);
             this.btnClearTX.TabIndex = 15;
@@ -282,7 +296,7 @@
             this.textBoxTX.Name = "textBoxTX";
             this.textBoxTX.ReadOnly = true;
             this.textBoxTX.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxTX.Size = new System.Drawing.Size(307, 169);
+            this.textBoxTX.Size = new System.Drawing.Size(303, 169);
             this.textBoxTX.TabIndex = 1;
             // 
             // btnWriteMSP
@@ -495,12 +509,12 @@
             this.tabctrlCMD.Location = new System.Drawing.Point(7, 84);
             this.tabctrlCMD.Name = "tabctrlCMD";
             this.tabctrlCMD.SelectedIndex = 0;
-            this.tabctrlCMD.Size = new System.Drawing.Size(308, 110);
+            this.tabctrlCMD.Size = new System.Drawing.Size(304, 110);
             this.tabctrlCMD.TabIndex = 17;
             // 
             // tabPage1
             // 
-            this.tabPage1.Controls.Add(this.btnGetN);
+            this.tabPage1.Controls.Add(this.btnSynch);
             this.tabPage1.Controls.Add(this.btnResetPuc);
             this.tabPage1.Controls.Add(this.btnPause);
             this.tabPage1.Controls.Add(this.btnRun);
@@ -508,10 +522,20 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(300, 84);
+            this.tabPage1.Size = new System.Drawing.Size(296, 84);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "1";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // btnSynch
+            // 
+            this.btnSynch.Location = new System.Drawing.Point(6, 43);
+            this.btnSynch.Name = "btnSynch";
+            this.btnSynch.Size = new System.Drawing.Size(126, 31);
+            this.btnSynch.TabIndex = 24;
+            this.btnSynch.Text = "SINCRONIZAR";
+            this.btnSynch.UseVisualStyleBackColor = true;
+            this.btnSynch.Click += new System.EventHandler(this.btnSynch_Click);
             // 
             // btnResetPuc
             // 
@@ -555,7 +579,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(300, 84);
+            this.tabPage2.Size = new System.Drawing.Size(296, 84);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "2";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -563,7 +587,7 @@
             // btnBITSET
             // 
             this.btnBITSET.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBITSET.Location = new System.Drawing.Point(112, 15);
+            this.btnBITSET.Location = new System.Drawing.Point(108, 15);
             this.btnBITSET.Name = "btnBITSET";
             this.btnBITSET.Size = new System.Drawing.Size(60, 52);
             this.btnBITSET.TabIndex = 20;
@@ -578,13 +602,13 @@
             this.textboxCMDAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.textboxCMDAddress.Location = new System.Drawing.Point(39, 15);
             this.textboxCMDAddress.Name = "textboxCMDAddress";
-            this.textboxCMDAddress.Size = new System.Drawing.Size(67, 23);
+            this.textboxCMDAddress.Size = new System.Drawing.Size(63, 23);
             this.textboxCMDAddress.TabIndex = 15;
             // 
             // btnBITINV
             // 
             this.btnBITINV.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBITINV.Location = new System.Drawing.Point(237, 15);
+            this.btnBITINV.Location = new System.Drawing.Point(233, 15);
             this.btnBITINV.Name = "btnBITINV";
             this.btnBITINV.Size = new System.Drawing.Size(60, 52);
             this.btnBITINV.TabIndex = 21;
@@ -619,13 +643,13 @@
             this.textboxCMDBit.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.textboxCMDBit.Location = new System.Drawing.Point(39, 44);
             this.textboxCMDBit.Name = "textboxCMDBit";
-            this.textboxCMDBit.Size = new System.Drawing.Size(67, 23);
+            this.textboxCMDBit.Size = new System.Drawing.Size(63, 23);
             this.textboxCMDBit.TabIndex = 18;
             // 
             // btnBITCLR
             // 
             this.btnBITCLR.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBITCLR.Location = new System.Drawing.Point(174, 15);
+            this.btnBITCLR.Location = new System.Drawing.Point(170, 15);
             this.btnBITCLR.Name = "btnBITCLR";
             this.btnBITCLR.Size = new System.Drawing.Size(60, 52);
             this.btnBITCLR.TabIndex = 19;
@@ -636,7 +660,7 @@
             // btnClearCMD
             // 
             this.btnClearCMD.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClearCMD.Location = new System.Drawing.Point(235, 196);
+            this.btnClearCMD.Location = new System.Drawing.Point(231, 196);
             this.btnClearCMD.Name = "btnClearCMD";
             this.btnClearCMD.Size = new System.Drawing.Size(80, 24);
             this.btnClearCMD.TabIndex = 16;
@@ -655,7 +679,7 @@
             this.textboxCMDLog.Name = "textboxCMDLog";
             this.textboxCMDLog.ReadOnly = true;
             this.textboxCMDLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textboxCMDLog.Size = new System.Drawing.Size(308, 49);
+            this.textboxCMDLog.Size = new System.Drawing.Size(304, 49);
             this.textboxCMDLog.TabIndex = 1;
             // 
             // labelCMDReg
@@ -681,7 +705,7 @@
             // btnSendRX
             // 
             this.btnSendRX.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSendRX.Location = new System.Drawing.Point(235, 35);
+            this.btnSendRX.Location = new System.Drawing.Point(231, 35);
             this.btnSendRX.Name = "btnSendRX";
             this.btnSendRX.Size = new System.Drawing.Size(80, 24);
             this.btnSendRX.TabIndex = 5;
@@ -696,7 +720,7 @@
             this.textboxRX.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.textboxRX.Location = new System.Drawing.Point(7, 36);
             this.textboxRX.Name = "textboxRX";
-            this.textboxRX.Size = new System.Drawing.Size(222, 23);
+            this.textboxRX.Size = new System.Drawing.Size(218, 23);
             this.textboxRX.TabIndex = 1;
             this.textboxRX.KeyDown += new System.Windows.Forms.KeyEventHandler(this._cmdBox_KeyDown);
             // 
@@ -709,16 +733,6 @@
             this.labelRX.Size = new System.Drawing.Size(25, 16);
             this.labelRX.TabIndex = 0;
             this.labelRX.Text = "RX";
-            // 
-            // btnGetN
-            // 
-            this.btnGetN.Location = new System.Drawing.Point(6, 43);
-            this.btnGetN.Name = "btnGetN";
-            this.btnGetN.Size = new System.Drawing.Size(126, 31);
-            this.btnGetN.TabIndex = 24;
-            this.btnGetN.Text = "SINCRONIZAR";
-            this.btnGetN.UseVisualStyleBackColor = true;
-            this.btnGetN.Click += new System.EventHandler(this.btnGetN_Click);
             // 
             // App
             // 
@@ -809,7 +823,7 @@
         private System.Windows.Forms.Button btnAddEnd;
         private System.Windows.Forms.Button btnRefreshPorts;
         private System.Windows.Forms.Label labelAlert;
-        private System.Windows.Forms.Button btnGetN;
+        private System.Windows.Forms.Button btnSynch;
     }
 }
 

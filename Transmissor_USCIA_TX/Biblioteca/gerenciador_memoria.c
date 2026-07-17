@@ -8,18 +8,19 @@
 #include "gerenciador_memoria.h"
 char* msg = "TESTE\r\n";//DEON //<<<<<<<<<<apagar depois
 
-MEM* vetor_ptr = NULL; MEM vetor_qtd = NULL; byte svt = 0;//indica a quantidade de vetores de uma ou mais posições.
+REG16* vetor_reg16 = NULL;
+MEM* vetor_ptr = NULL; MEM vetor_qtd = NULL; byte svt = 0; byte nreg = 0;//indica a quantidade de vetores de uma ou mais posições.
 byte e = 0; byte imp_user = 0; byte cont = 0;//contador de amostragem dos RAWs.
 
 volatile byte* pc = 0; //pc aponta para ninguem. Com volatile, ele é obrigado a ler da memória toda vez.
 byte qtd_itens_fila = 0; char* fila_msgs[5]; //fila
 
 void imprima_gerenciador(char* ptr_C) {//Funcao NAO bloqueante
-	fila_msgs[qtd_itens_fila++] = ptr_C;  		//adiciona o ponteiro a fila
+	fila_msgs[qtd_itens_fila++] = ptr_C;//adiciona o ponteiro a fila
 	if (qtd_itens_fila > 5) {
-		pc = "ERROR_FILA_CHEIA\n";//<<<<<<<<
+		pc = "ERROR_FILA_CHEIA\n";
 		qtd_itens_fila = 5;
-	}  		//=3 para saturar no fim, no error
+	}
 }
 
 void imprima_user(char* ptr_C) {//OK, funcionando perfeitamente, Funcao bloqueante
@@ -35,6 +36,20 @@ void imprima_user(char* ptr_C) {//OK, funcionando perfeitamente, Funcao bloquean
 	imp_user = 0;
 }//imprima_user
 
+byte aloc_reg(REG16 p){//aloca endereço no vetor_ptr
+	REG16* p1 = (REG16*)realloc((void*)vetor_reg16,  (nreg + 1)*sizeof(vetor_reg16) );
+	if ((p1!= NULL) ){
+		vetor_reg16 = p1; vetor_reg16[nreg] = p;
+		nreg++;
+		obter_inds(2); //TODO Victor rever isto aqui como vai ser
+		return 1;//sucesso
+	} else {
+		imprima_gerenciador("Error_aloc_memoria_REG\n");
+		return 0;//falha na alocacao!
+	}
+	//while(e);// todo aguarda a transmissao da msg antes de retornar
+}
+
 //retorna 1 se deu certo a alocacao e 0 caso contrario
 byte aloc_addr(MEM p, byte tam){//aloca endereço no vetor_ptr
 	MEM* p1 = (MEM*)realloc(vetor_ptr,       (svt + 1)*sizeof(MEM)    );
@@ -43,29 +58,29 @@ byte aloc_addr(MEM p, byte tam){//aloca endereço no vetor_ptr
 		vetor_ptr = p1; vetor_qtd = p2;
 		vetor_ptr[svt] = p; vetor_qtd[svt] = tam - 1;//seria bom verificar o TAM
 		svt++;
-	    obter_inds(tam);
-		//imprima_gerenciador("ao\n"); //alocacão ok
-		//while(e); todo aguarda a transmissao da msg antes de retornar
+	    obter_inds(tam);//alocacão ok e a quantidade
 		return 1;//sucesso
 	} else {
 		imprima_gerenciador("Error_aloc_memoria\n");
-		//while(e); todo aguarda a transmissao da msg antes de retornar
 		return 0;//falha na alocacao!
 	}
+	//while(e);// todo aguarda a transmissao da msg antes de retornar
 }//funcao add_addr
 
 // Escreve a confirmação da quantidade de índices salva, no formato: "ao000\n"
-void obter_inds(byte bytes_to_add) {
+void obter_inds(byte qnt_novos_bytes) {
     static byte tam_N = 0; // Quantos bytes de índice temos no total
-    tam_N += bytes_to_add;
-    char msg_confirmacao[7] = {
-      'a','o',
-      '0' + (tam_N/100),
-      '0' + ((tam_N%100)/10),
-      '0' + (tam_N%10),
-      '\n', '\0'
-    };
-    imprima_gerenciador(msg_confirmacao);
+    tam_N += qnt_novos_bytes;
+    static char msg_confirmacao[7] = {'a','o','0','0','0','\n','\0'};
+    // Atualiza lista enviada
+    msg_confirmacao[2] = '0' + (tam_N/100);
+    msg_confirmacao[3] = '0' + ((tam_N%100)/10);
+	msg_confirmacao[4] = '0' + (tam_N%10);
+
+    imprima_gerenciador(msg_confirmacao);//a nao ser que: while(e); //aguarde a transmissao da confirmacao
+    // while(qtd_itens_fila);
+    // while(!e); //mais seguro
+    // while(e);//mais seguro
 }//funcao obter_inds
 
 void write_ind(byte indice, byte valor){

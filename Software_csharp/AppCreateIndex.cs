@@ -124,16 +124,13 @@ namespace gerenciamento_memoria {
             foreach (Microcontroller microcontroller in microcontrollers) {
                 TreeNode microNode = treeviewRegisters.Nodes.Add(microcontroller.Name);
                 microNode.Tag = microcontroller;
-                //int bits = microcontroller.ArchitectureBits;
-                //string format = "X" + (bits / 4).ToString();
+                int bits = microcontroller.ArchitectureBits;
+                string format = "X" + (bits / 4).ToString();
                 foreach (Module module in microcontroller.Modules) {
                     TreeNode moduleNode = microNode.Nodes.Add(module.Name);
                     moduleNode.Tag = module;    // Save the Module as Tag object
 
                     foreach (Register register in module.Registers) {
-                        int bits = register.Bits;
-                        string format = "X" + (bits / 4).ToString();
-
                         TreeNode registerNode = moduleNode.Nodes.Add(
                             $"{register.Name} (0x{register.Address.ToString(format)})"
                         );
@@ -168,10 +165,9 @@ namespace gerenciamento_memoria {
             // Renderer for Selected treeview. ------------------------
             treeviewSelected.Nodes.Clear();
             selected_registers.ForEach(register => {
-                int bits = register.Bits;
-                string format = "X" + (bits / 4).ToString();
+
                 TreeNode registerNode = treeviewSelected.Nodes.Add(
-                    $"{register.Name} (0x{register.Address.ToString(format)})"
+                    $"{register.Name} (0x{register.Address:X})"
                 );
                 registerNode.Tag = register;
             });
