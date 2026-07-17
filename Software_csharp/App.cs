@@ -90,8 +90,7 @@ namespace gerenciamento_memoria {
                 if (com.Close(selected_port)) {
                     Console.WriteLine($"Porta [{selected_port}] encerrada.");
                     selected_port = null;
-                }
-                else {
+                } else {
                     Console.WriteLine($"Porta [{selected_port}] não encerrada (falha).");
                 }
             }
@@ -155,16 +154,13 @@ namespace gerenciamento_memoria {
                         // Header to System String
                         str_buffer = "";
                         reading_state = STATE.STRING;
-                    }
-                    else if (v == (byte)STATE.RAW) {
+                    } else if (v == (byte)STATE.RAW) {
                         // Header to Raw Data
                         raw_counter = 0;
                         reading_state = STATE.RAW;
-                    }
-                    else if (v == Communication.dummyByte) {//filtrando o valor 255 que é transmitido automaticamente ao resetar
+                    } else if (v == Communication.dummyByte) {//filtrando o valor 255 que é transmitido automaticamente ao resetar
                         //continua no estado STATE.WAITING_ID;///<<<<<<<< 
-                    }
-                    else {
+                    } else {
                         // Wasn't a valid header, start the buffer for UserMsg (Header Failure)
                         // Recoveries the first dummy byte and add the current byte to the buffer
                         str_buffer = ((char)Communication.dummyByte).ToString() + (char)v;
@@ -211,8 +207,7 @@ namespace gerenciamento_memoria {
                 textboxRX.Clear();
                 if (!string.IsNullOrEmpty(value)) com.WriteStr(value);
                 AddComandToLog($"Cmd: '{value}'");
-            }
-            catch {
+            } catch {
                 MessageBox.Show("Verifique a conexão da porta.");
             }
         }
@@ -265,7 +260,7 @@ namespace gerenciamento_memoria {
                     textboxConsole.SelectionColor = Color.Red;
                 else if (str_ready.Contains("Running"))//<<<<<<<<<<
                     textboxConsole.SelectionColor = Color.Blue;
-                else if (str_ready.Contains("Resetado")){
+                else if (str_ready.Contains("Resetado")) {
                     textboxConsole.SelectionColor = Color.Green;//Console.Beep();
                 }
                 textboxConsole.AppendText(str_ready);
@@ -309,12 +304,11 @@ namespace gerenciamento_memoria {
                             break;
                     }
 
-                    dataGrid.Rows[row].Cells[1].Value = new_formatted_value;            //Hex or Bin
-                    dataGrid.Rows[row].Cells[2].Value = raw_ready[ix];                  //Dec
-                }
-                catch {
-                    dataGrid.Rows[row].Cells[1].Value = "?";    //Hex
-                    dataGrid.Rows[row].Cells[2].Value = "?";    //Dec
+                    dataGrid.Rows[row].Cells[2].Value = new_formatted_value;            //Hex or Bin
+                    dataGrid.Rows[row].Cells[3].Value = raw_ready[ix];                  //Dec
+                } catch {
+                    dataGrid.Rows[row].Cells[2].Value = "?";    //Hex
+                    dataGrid.Rows[row].Cells[3].Value = "?";    //Dec
                 }
             }
         }
@@ -344,7 +338,7 @@ namespace gerenciamento_memoria {
             }
             if (lastIndex > 0) lastIndex++;
             for (int i = 0; i < 5; i++) {
-                dataGrid.Rows.Add((i+lastIndex).ToString(), "?", "?");
+                dataGrid.Rows.Add((i + lastIndex).ToString(), "?", "?");
             }
         }
 
@@ -356,8 +350,7 @@ namespace gerenciamento_memoria {
                 for (int i = dataGrid.SelectedRows.Count - 1; i >= 0; i--) {
                     dataGrid.Rows.RemoveAt(dataGrid.SelectedRows[i].Index);
                 }
-            }
-            else {
+            } else {
                 MessageBox.Show("Selecione pelo menos uma linha para remover.");
             }
         }
@@ -377,14 +370,18 @@ namespace gerenciamento_memoria {
             _clearDatagridPaint();
             if (e.ColumnIndex <= 0) return; //blocks for error in edit ix
             int row = e.RowIndex;
-            byte index = (byte) _getRowIndex(row);
-            byte value = (byte) _getRowValue(row);
+
+            int valueResult = _getRowValue(row);
+            if (valueResult == -2) return;
+
+            byte index = (byte)_getRowIndex(row);
+            byte value = (byte)valueResult;
+
             if (value >= 0 && index >= 0 && index < qntRaws) {
                 // COMMAND 251: Write value in index from array
                 WriteCmdToMicro(251, 2, index, value);
                 _clearRowWrite(row);
-            }
-            else {
+            } else {
                 // Paint the line
                 foreach (DataGridViewCell cell in dataGrid.Rows[row].Cells) {
                     cell.Style.BackColor = Color.LightPink;
@@ -415,7 +412,7 @@ namespace gerenciamento_memoria {
         /* ====================================  */
         /* Special Commands                      */
         /* ====================================  */
-
+        
         // P3OUT is 19 in hex, 
         //Console.WriteLine($"> Address: {address}, Value: {v}");
         private void btnBITSET_Click(object sender, EventArgs e) {
@@ -499,7 +496,7 @@ namespace gerenciamento_memoria {
                 selected_port = null;
             }
         }
-        
+
         // Update the PortBox every time that a device is detected.
         protected override void WndProc(ref Message m) {
             base.WndProc(ref m);
@@ -554,31 +551,31 @@ namespace gerenciamento_memoria {
             try {
                 // Cell0 = ix
                 return int.Parse(dataGrid.Rows[row].Cells[0].Value.ToString().Trim());
-            }
-            catch {
+            } catch {
                 return -1;
             }
         }
 
         private int _getRowValue(int row) {
-            // Tries to return hex
-            try {
-                // Cell3 = whex
-                string text = dataGrid.Rows[row].Cells[3].Value.ToString().Trim();
-                if (text.Contains('x')) text = text.Split('x')[1]; //Accept "0x" notation
-                //Console.WriteLine($">{text}");
-                return int.Parse(text, System.Globalization.NumberStyles.HexNumber);
-            }
-            catch { }
 
-            // Tries to return dec, if hex fails
-            try {
-                // Cell4 = wdec
-                return int.Parse(dataGrid.Rows[row].Cells[4].Value.ToString().Trim());
+            string textHex = dataGrid.Rows[row].Cells[4].Value?.ToString()?.Trim() ?? "";
+            string textDec = dataGrid.Rows[row].Cells[5].Value?.ToString()?.Trim() ?? "";
+
+            if (string.IsNullOrWhiteSpace(textHex) && string.IsNullOrWhiteSpace(textDec)) {
+                return -2;
             }
-            catch {
-                return -1;
+            if (!string.IsNullOrWhiteSpace(textHex)) {
+                try {
+                    if (textHex.Contains('x')) textHex = textHex.Split('x')[1]; // Aceita "0x"
+                    return int.Parse(textHex, System.Globalization.NumberStyles.HexNumber);
+                } catch { }
             }
+            if (!string.IsNullOrWhiteSpace(textDec)) {
+                try {
+                    return int.Parse(textDec);
+                } catch { }
+            }
+            return -1;
         }
 
         private int _getHex(string text) {
@@ -589,8 +586,7 @@ namespace gerenciamento_memoria {
                 if (text.Contains('x')) text = text.Split('x')[1]; //Accept "0x" notation
                 //Console.WriteLine($">{text}");
                 return int.Parse(text, System.Globalization.NumberStyles.HexNumber);
-            }
-            catch { return -1; }
+            } catch { return -1; }
         }
 
         private int _getDec(string text) {
@@ -598,8 +594,7 @@ namespace gerenciamento_memoria {
             try {
                 // Cell4 = wdec
                 return int.Parse(text.Trim());
-            }
-            catch { return -1; }
+            } catch { return -1; }
         }
 
         private bool _clearRowWrite(int row) {
@@ -607,8 +602,7 @@ namespace gerenciamento_memoria {
                 dataGrid.Rows[row].Cells[3].Value = "";
                 dataGrid.Rows[row].Cells[4].Value = "";
                 return true;
-            }
-            catch {
+            } catch {
                 return false;
             }
         }
@@ -680,11 +674,9 @@ namespace gerenciamento_memoria {
 
                     MessageBox.Show("Processo de gravação finalizado!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 MessageBox.Show($"Erro ao executar o BSLDEMO: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            finally {
+            } finally {
                 DoConnection(comPort); // Reconnect after writing to MSP
             }
         }
@@ -776,5 +768,28 @@ namespace gerenciamento_memoria {
             btnSynch.Cursor = Cursors.Default;
         }
 
+        /* ====================================  */
+        /* Resize actions                        */
+        /* ====================================  */
+
+        private void App_Resize(object sender, EventArgs e) {
+            Console.WriteLine(this.Width);
+            if (dataGrid.Columns.Count > 0) {
+                if (this.Width < 800) {
+                    colName.Visible = false;
+                } else {
+                    colName.Visible = true;
+                }
+                // Altere o índice [0] para o número da coluna que deseja modificar
+                // Usamos a largura do Form (this.Width), mas você também pode usar a do Grid (dataGridView1.Width)
+                //if (this.Width < 600) {
+                //    dataGridView1.Columns[0].HeaderText = "Qtd"; // Nome curto para telas pequenas
+                //} else if (this.Width >= 600 && this.Width < 1000) {
+                //    dataGridView1.Columns[0].HeaderText = "Quantidade"; // Nome médio
+                //} else {
+                //    dataGridView1.Columns[0].HeaderText = "Quantidade de Registros"; // Nome completo para Fullscreen
+                //}
+            }
+        }
     }
 }

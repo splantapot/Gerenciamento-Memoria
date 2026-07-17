@@ -23,8 +23,8 @@
         /// o conteúdo deste método com o editor de código.
         /// </summary>
         private void InitializeComponent() {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.btnAddRow = new System.Windows.Forms.Button();
             this.panelDatagrid = new System.Windows.Forms.Panel();
             this.splitTop = new System.Windows.Forms.SplitContainer();
@@ -32,11 +32,6 @@
             this.radbtnHex = new System.Windows.Forms.RadioButton();
             this.labelExibitionType = new System.Windows.Forms.Label();
             this.dataGrid = new System.Windows.Forms.DataGridView();
-            this.colIndexes = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colReadHex = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colReadDec = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colWriteHex = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colWriteDec = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.labelAlert = new System.Windows.Forms.Label();
             this.btnClearTX = new System.Windows.Forms.Button();
             this.labelTX = new System.Windows.Forms.Label();
@@ -78,6 +73,13 @@
             this.btnSendRX = new System.Windows.Forms.Button();
             this.textboxRX = new System.Windows.Forms.TextBox();
             this.labelRX = new System.Windows.Forms.Label();
+            this.colIndexes = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colReadHex = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colReadDec = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colWriteHex = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colWriteDec = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.radBtnHex0 = new System.Windows.Forms.RadioButton();
             this.panelDatagrid.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitTop)).BeginInit();
             this.splitTop.Panel1.SuspendLayout();
@@ -112,7 +114,7 @@
             this.panelDatagrid.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelDatagrid.Location = new System.Drawing.Point(0, 0);
             this.panelDatagrid.Name = "panelDatagrid";
-            this.panelDatagrid.Size = new System.Drawing.Size(684, 207);
+            this.panelDatagrid.Size = new System.Drawing.Size(784, 207);
             this.panelDatagrid.TabIndex = 7;
             // 
             // splitTop
@@ -123,6 +125,7 @@
             // 
             // splitTop.Panel1
             // 
+            this.splitTop.Panel1.Controls.Add(this.radBtnHex0);
             this.splitTop.Panel1.Controls.Add(this.radbtnBin);
             this.splitTop.Panel1.Controls.Add(this.radbtnHex);
             this.splitTop.Panel1.Controls.Add(this.labelExibitionType);
@@ -134,8 +137,8 @@
             this.splitTop.Panel2.Controls.Add(this.btnClearTX);
             this.splitTop.Panel2.Controls.Add(this.labelTX);
             this.splitTop.Panel2.Controls.Add(this.textBoxTX);
-            this.splitTop.Size = new System.Drawing.Size(684, 207);
-            this.splitTop.SplitterDistance = 342;
+            this.splitTop.Size = new System.Drawing.Size(784, 207);
+            this.splitTop.SplitterDistance = 392;
             this.splitTop.SplitterWidth = 6;
             this.splitTop.TabIndex = 1;
             // 
@@ -143,7 +146,7 @@
             // 
             this.radbtnBin.AutoSize = true;
             this.radbtnBin.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.radbtnBin.Location = new System.Drawing.Point(128, 7);
+            this.radbtnBin.Location = new System.Drawing.Point(190, 7);
             this.radbtnBin.Name = "radbtnBin";
             this.radbtnBin.Size = new System.Drawing.Size(40, 17);
             this.radbtnBin.TabIndex = 11;
@@ -185,72 +188,40 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGrid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGrid.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.Raised;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.dataGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGrid.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.colIndexes,
+            this.colName,
             this.colReadHex,
             this.colReadDec,
             this.colWriteHex,
             this.colWriteDec});
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGrid.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGrid.DefaultCellStyle = dataGridViewCellStyle4;
             this.dataGrid.GridColor = System.Drawing.SystemColors.Control;
             this.dataGrid.Location = new System.Drawing.Point(8, 32);
             this.dataGrid.Name = "dataGrid";
             this.dataGrid.RowHeadersWidth = 30;
             this.dataGrid.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
-            this.dataGrid.Size = new System.Drawing.Size(331, 172);
+            this.dataGrid.Size = new System.Drawing.Size(381, 172);
             this.dataGrid.TabIndex = 0;
             this.dataGrid.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dataGrid_CellBeginEdit_ClearPaint);
             this.dataGrid.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGrid_CellClick_ClearPaint);
             this.dataGrid.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGrid_CellEndEdit);
-            // 
-            // colIndexes
-            // 
-            this.colIndexes.HeaderText = "Índices";
-            this.colIndexes.Name = "colIndexes";
-            // 
-            // colReadHex
-            // 
-            this.colReadHex.HeaderText = "Hex";
-            this.colReadHex.MinimumWidth = 70;
-            this.colReadHex.Name = "colReadHex";
-            this.colReadHex.ReadOnly = true;
-            this.colReadHex.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.colReadHex.ToolTipText = "Ler Hexadecimal";
-            // 
-            // colReadDec
-            // 
-            this.colReadDec.HeaderText = "Dec";
-            this.colReadDec.Name = "colReadDec";
-            this.colReadDec.ReadOnly = true;
-            this.colReadDec.ToolTipText = "Ver Decimal";
-            // 
-            // colWriteHex
-            // 
-            this.colWriteHex.HeaderText = "Hex";
-            this.colWriteHex.Name = "colWriteHex";
-            this.colWriteHex.ToolTipText = "Escrever Hexadecimal";
-            // 
-            // colWriteDec
-            // 
-            this.colWriteDec.HeaderText = "Dec";
-            this.colWriteDec.Name = "colWriteDec";
-            this.colWriteDec.ToolTipText = "Escrever Decimal";
             // 
             // labelAlert
             // 
@@ -267,7 +238,7 @@
             // btnClearTX
             // 
             this.btnClearTX.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClearTX.Location = new System.Drawing.Point(231, 6);
+            this.btnClearTX.Location = new System.Drawing.Point(279, 6);
             this.btnClearTX.Name = "btnClearTX";
             this.btnClearTX.Size = new System.Drawing.Size(80, 24);
             this.btnClearTX.TabIndex = 15;
@@ -296,7 +267,7 @@
             this.textBoxTX.Name = "textBoxTX";
             this.textBoxTX.ReadOnly = true;
             this.textBoxTX.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxTX.Size = new System.Drawing.Size(303, 169);
+            this.textBoxTX.Size = new System.Drawing.Size(351, 169);
             this.textBoxTX.TabIndex = 1;
             // 
             // btnWriteMSP
@@ -324,14 +295,14 @@
             this.panelButtons.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelButtons.Location = new System.Drawing.Point(0, 207);
             this.panelButtons.Name = "panelButtons";
-            this.panelButtons.Size = new System.Drawing.Size(684, 70);
+            this.panelButtons.Size = new System.Drawing.Size(784, 70);
             this.panelButtons.TabIndex = 8;
             // 
             // btnRefreshPorts
             // 
             this.btnRefreshPorts.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRefreshPorts.Font = new System.Drawing.Font("Segoe MDL2 Assets", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRefreshPorts.Location = new System.Drawing.Point(643, 3);
+            this.btnRefreshPorts.Location = new System.Drawing.Point(743, 3);
             this.btnRefreshPorts.Name = "btnRefreshPorts";
             this.btnRefreshPorts.Size = new System.Drawing.Size(26, 25);
             this.btnRefreshPorts.TabIndex = 20;
@@ -374,7 +345,7 @@
             // btnDesconnect
             // 
             this.btnDesconnect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDesconnect.Location = new System.Drawing.Point(589, 34);
+            this.btnDesconnect.Location = new System.Drawing.Point(689, 34);
             this.btnDesconnect.Name = "btnDesconnect";
             this.btnDesconnect.Size = new System.Drawing.Size(80, 30);
             this.btnDesconnect.TabIndex = 7;
@@ -385,7 +356,7 @@
             // btnConnected
             // 
             this.btnConnected.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnConnected.Location = new System.Drawing.Point(503, 34);
+            this.btnConnected.Location = new System.Drawing.Point(603, 34);
             this.btnConnected.Name = "btnConnected";
             this.btnConnected.Size = new System.Drawing.Size(80, 30);
             this.btnConnected.TabIndex = 6;
@@ -399,7 +370,7 @@
             this.comboxPorts.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboxPorts.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.comboxPorts.FormattingEnabled = true;
-            this.comboxPorts.Location = new System.Drawing.Point(503, 4);
+            this.comboxPorts.Location = new System.Drawing.Point(603, 4);
             this.comboxPorts.Name = "comboxPorts";
             this.comboxPorts.Size = new System.Drawing.Size(135, 24);
             this.comboxPorts.TabIndex = 5;
@@ -421,7 +392,7 @@
             this.panelMsg.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelMsg.Location = new System.Drawing.Point(0, 277);
             this.panelMsg.Name = "panelMsg";
-            this.panelMsg.Size = new System.Drawing.Size(684, 284);
+            this.panelMsg.Size = new System.Drawing.Size(784, 284);
             this.panelMsg.TabIndex = 9;
             // 
             // splitMsg
@@ -449,8 +420,8 @@
             this.splitMsg.Panel2.Controls.Add(this.textboxRX);
             this.splitMsg.Panel2.Controls.Add(this.labelRX);
             this.splitMsg.Panel2.Padding = new System.Windows.Forms.Padding(5);
-            this.splitMsg.Size = new System.Drawing.Size(684, 284);
-            this.splitMsg.SplitterDistance = 342;
+            this.splitMsg.Size = new System.Drawing.Size(784, 284);
+            this.splitMsg.SplitterDistance = 392;
             this.splitMsg.SplitterWidth = 6;
             this.splitMsg.TabIndex = 0;
             // 
@@ -463,7 +434,7 @@
             this.panelConsole.Controls.Add(this.textboxConsole);
             this.panelConsole.Location = new System.Drawing.Point(8, 36);
             this.panelConsole.Name = "panelConsole";
-            this.panelConsole.Size = new System.Drawing.Size(331, 236);
+            this.panelConsole.Size = new System.Drawing.Size(381, 236);
             this.panelConsole.TabIndex = 16;
             // 
             // textboxConsole
@@ -474,14 +445,14 @@
             this.textboxConsole.Location = new System.Drawing.Point(0, 0);
             this.textboxConsole.Name = "textboxConsole";
             this.textboxConsole.ReadOnly = true;
-            this.textboxConsole.Size = new System.Drawing.Size(329, 234);
+            this.textboxConsole.Size = new System.Drawing.Size(379, 234);
             this.textboxConsole.TabIndex = 15;
             this.textboxConsole.Text = "";
             // 
             // btnClearConsole
             // 
             this.btnClearConsole.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClearConsole.Location = new System.Drawing.Point(272, 7);
+            this.btnClearConsole.Location = new System.Drawing.Point(322, 7);
             this.btnClearConsole.Name = "btnClearConsole";
             this.btnClearConsole.Size = new System.Drawing.Size(67, 24);
             this.btnClearConsole.TabIndex = 14;
@@ -509,7 +480,7 @@
             this.tabctrlCMD.Location = new System.Drawing.Point(7, 84);
             this.tabctrlCMD.Name = "tabctrlCMD";
             this.tabctrlCMD.SelectedIndex = 0;
-            this.tabctrlCMD.Size = new System.Drawing.Size(304, 110);
+            this.tabctrlCMD.Size = new System.Drawing.Size(352, 110);
             this.tabctrlCMD.TabIndex = 17;
             // 
             // tabPage1
@@ -522,7 +493,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(296, 84);
+            this.tabPage1.Size = new System.Drawing.Size(344, 84);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "1";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -579,7 +550,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(296, 84);
+            this.tabPage2.Size = new System.Drawing.Size(344, 84);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "2";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -587,7 +558,7 @@
             // btnBITSET
             // 
             this.btnBITSET.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBITSET.Location = new System.Drawing.Point(108, 15);
+            this.btnBITSET.Location = new System.Drawing.Point(156, 15);
             this.btnBITSET.Name = "btnBITSET";
             this.btnBITSET.Size = new System.Drawing.Size(60, 52);
             this.btnBITSET.TabIndex = 20;
@@ -602,13 +573,13 @@
             this.textboxCMDAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.textboxCMDAddress.Location = new System.Drawing.Point(39, 15);
             this.textboxCMDAddress.Name = "textboxCMDAddress";
-            this.textboxCMDAddress.Size = new System.Drawing.Size(63, 23);
+            this.textboxCMDAddress.Size = new System.Drawing.Size(111, 23);
             this.textboxCMDAddress.TabIndex = 15;
             // 
             // btnBITINV
             // 
             this.btnBITINV.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBITINV.Location = new System.Drawing.Point(233, 15);
+            this.btnBITINV.Location = new System.Drawing.Point(281, 15);
             this.btnBITINV.Name = "btnBITINV";
             this.btnBITINV.Size = new System.Drawing.Size(60, 52);
             this.btnBITINV.TabIndex = 21;
@@ -643,13 +614,13 @@
             this.textboxCMDBit.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.textboxCMDBit.Location = new System.Drawing.Point(39, 44);
             this.textboxCMDBit.Name = "textboxCMDBit";
-            this.textboxCMDBit.Size = new System.Drawing.Size(63, 23);
+            this.textboxCMDBit.Size = new System.Drawing.Size(111, 23);
             this.textboxCMDBit.TabIndex = 18;
             // 
             // btnBITCLR
             // 
             this.btnBITCLR.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBITCLR.Location = new System.Drawing.Point(170, 15);
+            this.btnBITCLR.Location = new System.Drawing.Point(218, 15);
             this.btnBITCLR.Name = "btnBITCLR";
             this.btnBITCLR.Size = new System.Drawing.Size(60, 52);
             this.btnBITCLR.TabIndex = 19;
@@ -660,7 +631,7 @@
             // btnClearCMD
             // 
             this.btnClearCMD.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClearCMD.Location = new System.Drawing.Point(231, 196);
+            this.btnClearCMD.Location = new System.Drawing.Point(279, 196);
             this.btnClearCMD.Name = "btnClearCMD";
             this.btnClearCMD.Size = new System.Drawing.Size(80, 24);
             this.btnClearCMD.TabIndex = 16;
@@ -679,7 +650,7 @@
             this.textboxCMDLog.Name = "textboxCMDLog";
             this.textboxCMDLog.ReadOnly = true;
             this.textboxCMDLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textboxCMDLog.Size = new System.Drawing.Size(304, 49);
+            this.textboxCMDLog.Size = new System.Drawing.Size(352, 49);
             this.textboxCMDLog.TabIndex = 1;
             // 
             // labelCMDReg
@@ -705,7 +676,7 @@
             // btnSendRX
             // 
             this.btnSendRX.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSendRX.Location = new System.Drawing.Point(231, 35);
+            this.btnSendRX.Location = new System.Drawing.Point(279, 35);
             this.btnSendRX.Name = "btnSendRX";
             this.btnSendRX.Size = new System.Drawing.Size(80, 24);
             this.btnSendRX.TabIndex = 5;
@@ -720,7 +691,7 @@
             this.textboxRX.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.textboxRX.Location = new System.Drawing.Point(7, 36);
             this.textboxRX.Name = "textboxRX";
-            this.textboxRX.Size = new System.Drawing.Size(218, 23);
+            this.textboxRX.Size = new System.Drawing.Size(266, 23);
             this.textboxRX.TabIndex = 1;
             this.textboxRX.KeyDown += new System.Windows.Forms.KeyEventHandler(this._cmdBox_KeyDown);
             // 
@@ -734,17 +705,79 @@
             this.labelRX.TabIndex = 0;
             this.labelRX.Text = "RX";
             // 
+            // colIndexes
+            // 
+            this.colIndexes.FillWeight = 68.76791F;
+            this.colIndexes.HeaderText = "Idx";
+            this.colIndexes.Name = "colIndexes";
+            this.colIndexes.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            // 
+            // colName
+            // 
+            this.colName.FillWeight = 98.10896F;
+            this.colName.HeaderText = "Nome";
+            this.colName.Name = "colName";
+            // 
+            // colReadHex
+            // 
+            this.colReadHex.FillWeight = 108.2808F;
+            this.colReadHex.HeaderText = "Hex";
+            this.colReadHex.MinimumWidth = 70;
+            this.colReadHex.Name = "colReadHex";
+            this.colReadHex.ReadOnly = true;
+            this.colReadHex.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.colReadHex.ToolTipText = "Ler Hexadecimal";
+            // 
+            // colReadDec
+            // 
+            this.colReadDec.FillWeight = 108.2808F;
+            this.colReadDec.HeaderText = "Dec";
+            this.colReadDec.Name = "colReadDec";
+            this.colReadDec.ReadOnly = true;
+            this.colReadDec.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.colReadDec.ToolTipText = "Ver Decimal";
+            // 
+            // colWriteHex
+            // 
+            this.colWriteHex.FillWeight = 108.2808F;
+            this.colWriteHex.HeaderText = "Hex";
+            this.colWriteHex.Name = "colWriteHex";
+            this.colWriteHex.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.colWriteHex.ToolTipText = "Escrever Hexadecimal";
+            // 
+            // colWriteDec
+            // 
+            this.colWriteDec.FillWeight = 108.2808F;
+            this.colWriteDec.HeaderText = "Dec";
+            this.colWriteDec.Name = "colWriteDec";
+            this.colWriteDec.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.colWriteDec.ToolTipText = "Escrever Decimal";
+            // 
+            // radBtnHex0
+            // 
+            this.radBtnHex0.AutoSize = true;
+            this.radBtnHex0.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
+            this.radBtnHex0.Location = new System.Drawing.Point(125, 7);
+            this.radBtnHex0.Name = "radBtnHex0";
+            this.radBtnHex0.Size = new System.Drawing.Size(59, 17);
+            this.radBtnHex0.TabIndex = 17;
+            this.radBtnHex0.TabStop = true;
+            this.radBtnHex0.Text = "Hex (0)";
+            this.radBtnHex0.UseVisualStyleBackColor = true;
+            this.radBtnHex0.CheckedChanged += new System.EventHandler(this.radbtnHex0_CheckedChanged);
+            // 
             // App
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
             this.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.ClientSize = new System.Drawing.Size(684, 561);
+            this.ClientSize = new System.Drawing.Size(784, 561);
             this.Controls.Add(this.panelMsg);
             this.Controls.Add(this.panelButtons);
             this.Controls.Add(this.panelDatagrid);
-            this.MinimumSize = new System.Drawing.Size(600, 600);
+            this.MinimumSize = new System.Drawing.Size(650, 600);
             this.Name = "App";
             this.Text = "Gerenciamento de Memória do MSP430";
+            this.Resize += new System.EventHandler(this.App_Resize);
             this.panelDatagrid.ResumeLayout(false);
             this.splitTop.Panel1.ResumeLayout(false);
             this.splitTop.Panel1.PerformLayout();
@@ -774,10 +807,6 @@
         private System.Windows.Forms.Button btnAddRow;
         private System.Windows.Forms.Panel panelDatagrid;
         private System.Windows.Forms.DataGridView dataGrid;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colIndexes;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colReadDec;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colWriteHex;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colWriteDec;
         private System.Windows.Forms.Panel panelButtons;
         private System.Windows.Forms.Panel panelMsg;
         private System.Windows.Forms.SplitContainer splitMsg;
@@ -804,7 +833,6 @@
         private System.Windows.Forms.RadioButton radbtnHex;
         private System.Windows.Forms.RadioButton radbtnBin;
         private System.Windows.Forms.Label labelExibitionType;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colReadHex;
         private System.Windows.Forms.TabControl tabctrlCMD;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
@@ -824,6 +852,13 @@
         private System.Windows.Forms.Button btnRefreshPorts;
         private System.Windows.Forms.Label labelAlert;
         private System.Windows.Forms.Button btnSynch;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colIndexes;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colName;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colReadHex;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colReadDec;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colWriteHex;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colWriteDec;
+        private System.Windows.Forms.RadioButton radBtnHex0;
     }
 }
 
