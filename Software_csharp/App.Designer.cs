@@ -81,6 +81,8 @@
             this.btnSendRX = new System.Windows.Forms.Button();
             this.textboxRX = new System.Windows.Forms.TextBox();
             this.labelRX = new System.Windows.Forms.Label();
+            this.btnUpNames = new System.Windows.Forms.Button();
+            this.btnDownNames = new System.Windows.Forms.Button();
             this.panelDatagrid.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitTop)).BeginInit();
             this.splitTop.Panel1.SuspendLayout();
@@ -345,6 +347,8 @@
             // 
             // panelButtons
             // 
+            this.panelButtons.Controls.Add(this.btnDownNames);
+            this.panelButtons.Controls.Add(this.btnUpNames);
             this.panelButtons.Controls.Add(this.btnRefreshPorts);
             this.panelButtons.Controls.Add(this.btnAddAddr);
             this.panelButtons.Controls.Add(this.btnAddRegisters);
@@ -767,6 +771,26 @@
             this.labelRX.TabIndex = 0;
             this.labelRX.Text = "RX";
             // 
+            // btnUpNames
+            // 
+            this.btnUpNames.Location = new System.Drawing.Point(322, 3);
+            this.btnUpNames.Name = "btnUpNames";
+            this.btnUpNames.Size = new System.Drawing.Size(90, 30);
+            this.btnUpNames.TabIndex = 21;
+            this.btnUpNames.Text = "Subir Nomes";
+            this.btnUpNames.UseVisualStyleBackColor = true;
+            this.btnUpNames.Click += new System.EventHandler(this.btnUpNames_Click);
+            // 
+            // btnDownNames
+            // 
+            this.btnDownNames.Location = new System.Drawing.Point(322, 37);
+            this.btnDownNames.Name = "btnDownNames";
+            this.btnDownNames.Size = new System.Drawing.Size(90, 30);
+            this.btnDownNames.TabIndex = 22;
+            this.btnDownNames.Text = "Descer Nomes";
+            this.btnDownNames.UseVisualStyleBackColor = true;
+            this.btnDownNames.Click += new System.EventHandler(this.btnDownNames_Click);
+            // 
             // App
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
@@ -861,6 +885,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn colWriteHex;
         private System.Windows.Forms.DataGridViewTextBoxColumn colWriteDec;
         private System.Windows.Forms.RadioButton radBtnHex0;
+        private System.Windows.Forms.Button btnDownNames;
+        private System.Windows.Forms.Button btnUpNames;
     }
 }
 

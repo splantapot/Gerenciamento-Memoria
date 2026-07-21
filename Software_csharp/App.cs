@@ -884,5 +884,75 @@ namespace gerenciamento_memoria {
             }
         }
 
+        /* ====================================  */
+        /* Buttons to move names                 */
+        /* ====================================  */
+
+        private void btnUpNames_Click(object sender, EventArgs e) {
+            int qnt_rows = dataGrid.Rows.Count;
+
+            if (qnt_rows == 0) return;
+
+            // Check the first row condition BEFORE starting the loop
+            string firstRowText = dataGrid.Rows[0].Cells[1].Value?.ToString() ?? "";
+
+            if (!string.IsNullOrEmpty(firstRowText)) {
+                DialogResult result = MessageBox.Show(
+                    "A primeira linha possui texto e será apagada. Deseja prosseguir com a operação?",
+                    "Atenção - Confirmação",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning
+                );
+
+                if (result == DialogResult.No) {
+                    return; // Abort operation before modifying anything
+                }
+            }
+
+            // Shift values upward in Column index 1
+            for (int r = 0; r < qnt_rows; r++) {
+                if (r + 1 < qnt_rows) {
+                    dataGrid.Rows[r].Cells[1].Value = dataGrid.Rows[r + 1].Cells[1].Value;
+                } else {
+                    dataGrid.Rows[r].Cells[1].Value = ""; // Clear the last row after shifting
+                }
+            }
+        }
+
+        private void btnDownNames_Click(object sender, EventArgs e) {
+            int qnt_rows = dataGrid.Rows.Count;
+
+            if (qnt_rows == 0) return;
+
+            // Identify the last valid index considering optional AllowUserToAddRows
+            int lastRowIndex = dataGrid.AllowUserToAddRows ? qnt_rows - 2 : qnt_rows - 1;
+
+            if (lastRowIndex < 0) return;
+
+            // Check the last row condition BEFORE starting the loop
+            string lastRowText = dataGrid.Rows[lastRowIndex].Cells[1].Value?.ToString() ?? "";
+
+            if (!string.IsNullOrEmpty(lastRowText)) {
+                DialogResult result = MessageBox.Show(
+                    "A última linha possui texto e será apagada. Deseja prosseguir com a operação?",
+                    "Atenção - Confirmação",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning
+                );
+
+                if (result == DialogResult.No) {
+                    return; // Abort operation before modifying anything
+                }
+            }
+
+            // Shift values downward in Column index 1 (iterating backwards)
+            for (int r = lastRowIndex; r >= 0; r--) {
+                if (r - 1 >= 0) {
+                    dataGrid.Rows[r].Cells[1].Value = dataGrid.Rows[r - 1].Cells[1].Value;
+                } else {
+                    dataGrid.Rows[r].Cells[1].Value = ""; // Clear the first row after shifting down
+                }
+            }
+        }
     }
 }
