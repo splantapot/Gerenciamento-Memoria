@@ -1,5 +1,5 @@
 ﻿namespace gerenciamento_memoria {
-    partial class FormAguarde {
+    partial class AppLoading {
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -24,35 +24,46 @@
         /// </summary>
         private void InitializeComponent() {
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
-            this.label1 = new System.Windows.Forms.Label();
+            this.labelMsg = new System.Windows.Forms.Label();
+            this.labelCounter = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(106, 67);
+            this.progressBar1.Location = new System.Drawing.Point(39, 49);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(100, 23);
+            this.progressBar1.Size = new System.Drawing.Size(263, 23);
             this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
             this.progressBar1.TabIndex = 0;
             // 
-            // label1
+            // labelMsg
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(103, 93);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(266, 13);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Alocando registradores no microcontrolador... Aguarde.";
+            this.labelMsg.AutoSize = true;
+            this.labelMsg.Location = new System.Drawing.Point(36, 75);
+            this.labelMsg.Name = "labelMsg";
+            this.labelMsg.Size = new System.Drawing.Size(266, 13);
+            this.labelMsg.TabIndex = 1;
+            this.labelMsg.Text = "Alocando registradores no microcontrolador... Aguarde.";
             // 
-            // FormAguarde
+            // labelCounter
+            // 
+            this.labelCounter.AutoSize = true;
+            this.labelCounter.Location = new System.Drawing.Point(36, 92);
+            this.labelCounter.Name = "labelCounter";
+            this.labelCounter.Size = new System.Drawing.Size(79, 13);
+            this.labelCounter.TabIndex = 2;
+            this.labelCounter.Text = "Operação: 0/N";
+            // 
+            // AppLoading
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.label1);
+            this.ClientSize = new System.Drawing.Size(350, 150);
+            this.Controls.Add(this.labelCounter);
+            this.Controls.Add(this.labelMsg);
             this.Controls.Add(this.progressBar1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Name = "FormAguarde";
+            this.Name = "AppLoading";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "FormAguarde";
             this.ResumeLayout(false);
@@ -63,6 +74,7 @@
         #endregion
 
         private System.Windows.Forms.ProgressBar progressBar1;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label labelMsg;
+        private System.Windows.Forms.Label labelCounter;
     }
 }

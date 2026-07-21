@@ -48,6 +48,22 @@
             }
           ]
         }
+        {
+          "name": "Some Timer",
+          "code": "stm",
+          "registers": [
+            {
+              "name": "TA0CTL",
+              "address": 160,
+              "bits": 16
+            },
+            {
+              "name": "TA1CTL",
+              "address": 160,
+              "bits": 16
+            }
+          ]
+        }
       ]
     }
   ]

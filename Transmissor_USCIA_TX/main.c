@@ -15,15 +15,16 @@ int main(void) {
 
 	byte vetor_teste[] = {8, 9};//, 3, 4};
 
+	// TA0CTL in address: 0x160
 	TA0CTL = 0x0301;//teste de inicialização do registrador de 16 bits
 
-	//aloc_addr(&P3OUT, 1);//interessante o uso do sizeof, que informa certo o tamanho do registrador em bytes
-	aloc_addr(vetor_teste, sizeof(vetor_teste));
+	aloc_addr(&P3OUT, 1);//interessante o uso do sizeof, que informa certo o tamanho do registrador em bytes
+	//aloc_addr(vetor_teste, sizeof(vetor_teste));
 	//aloc_addr(&svt, 1);//svt = 3 nesse caso
 
 	//alocação de registrador sempre por último na tabela para facilitar
 	aloc_reg(&TA0CTL); //0x0301 esperado
-	//aloc_reg(&TA1CTL); //0x0221 esperado
+	aloc_reg(&TA1CTL); //0x0221 esperado
 
 	char cont = 0;//contador para dar uma base de tempo para alternar entre opcoes automaticamente
 	while (1) {

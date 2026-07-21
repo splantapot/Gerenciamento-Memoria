@@ -238,17 +238,17 @@ namespace gerenciamento_memoria {
             var match = System.Text.RegularExpressions.Regex.Match(str_ready, @"ao(\d{3})\n");
             if (match.Success) {
                 int newSize = Convert.ToInt32(match.Groups[1].Value, 10);
-                Console.WriteLine(newSize);
+                //Console.WriteLine(newSize);
                 InitRawBuffer(newSize);
                 isSynch = false;    // Ok, done synch
                 isAddingRegister = false;
             } else if (str_ready.Contains("Error_aloc_memoria")) {
-                isSynch = false;         // PARA o while do botão imediatamente!
+                isSynch = false;    // End synch (if bug)
                 isAddingRegister = false;
-                successRegister = false; // Sinaliza falha para a janela anterior
-                Console.WriteLine($"[FALHA MICROCONTROLADOR] Recebido: {str_ready.Trim()}");
+                successRegister = false; // Failures on aloc
+                Console.WriteLine($"[FALHA ALOC] Recebido: {str_ready.Trim()}");
             } else if (isSynch) {
-                Console.WriteLine($"[Tentativa Synch Falhou] Recebido: {str_ready.Replace("\n", "\\n")}");
+                Console.WriteLine($"[FALHA SYNCH] Recebido: {str_ready.Replace("\n", "\\n")}");
             }
 
             // Show alert for dump in user box
@@ -609,8 +609,8 @@ namespace gerenciamento_memoria {
 
         private bool _clearRowWrite(int row) {
             try {
-                dataGrid.Rows[row].Cells[3].Value = "";
                 dataGrid.Rows[row].Cells[4].Value = "";
+                dataGrid.Rows[row].Cells[5].Value = "";
                 return true;
             } catch {
                 return false;
@@ -691,6 +691,9 @@ namespace gerenciamento_memoria {
             }
         }
 
+        /* ====================================  */
+        /* Radio Buttons                         */
+        /* ====================================  */
         private void radbtnHex_CheckedChanged(object sender, EventArgs e) {
             grid_mode = GRID_EXIB.HEX;
             UpdateColumnName();
@@ -706,6 +709,105 @@ namespace gerenciamento_memoria {
             UpdateColumnName();
         }
 
+        /* ====================================  */
+        /* Aloc address functions                */
+        /* ====================================  */
+        private async void btnAddAddr_Click(object sender, EventArgs e) {
+            using (AppRegisters pageReg = new AppRegisters(true)) {
+                if (pageReg.ShowDialog() == DialogResult.OK) {
+                    Register newValuesTable = pageReg.selected_registers[0];
+
+                    AppLoading appLoading = new AppLoading("Alocando bytes no Microcontrolador... Aguarde.");
+                    appLoading.Show(this);
+                    this.Enabled = false;
+                    try {
+                        isAddingRegister = successRegister = true;
+                        Run193(newValuesTable);
+
+                        while (isAddingRegister) {
+                            await Task.Delay(100);
+                        }
+
+                        if (successRegister) {
+                            MessageBox.Show(
+                                "Alocação de memória concluída com sucesso!",
+                                "Sucesso",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Information
+                            );
+                        } else {
+                            MessageBox.Show(
+                                "Falha ao realizar a alocação de memória. Verifique os parâmetros e tente novamente.",
+                                "Erro de Alocação",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error
+                            );
+                        }
+                    } finally {
+                        appLoading.Close();
+                        appLoading.Dispose();
+                        this.Enabled = true;
+                        this.Focus();
+                    }
+                }
+            }
+        }
+
+        private async void btnAddRegisters_Click(object sender, EventArgs e) {
+            using (AppRegisters pageReg = new AppRegisters()) {
+                if (pageReg.ShowDialog() == DialogResult.OK) {
+                    List<Register> registers = pageReg.selected_registers;
+                    AppLoading appLoading = new AppLoading();
+                    appLoading.Show();
+                    this.Enabled = false;
+
+                    try {
+                        successRegister = true; // Only for the first time
+                        List<Register> error_registers = new List<Register>();
+                        foreach (Register register in pageReg.selected_registers) {
+                            //Skips if error
+                            if (successRegister) {
+                                isAddingRegister = true;
+
+                                // Run the command for the bits
+                                if (register.Bits > 8) Run194(register);
+                                else Run193(register);
+
+                                while (isAddingRegister && successRegister) {
+                                    await Task.Delay(100);
+                                }
+                            }
+                            if (!successRegister) error_registers.Add(register);
+                        }
+
+                        if (successRegister) {
+                            MessageBox.Show(
+                                "Alocação de registradores concluída com sucesso!",
+                                "Sucesso",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Information
+                            );
+                        } else {
+                            string errorList = string.Join("\n - ", error_registers.Select(r => r.Name));
+
+                            MessageBox.Show(
+                                $"Falha ao realizar a alocação de registradores.\n\n" +
+                                $"Os seguintes registradores foram rejeitados:\n - {errorList}",
+                                "Erro de Alocação",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error
+                            );
+                        }
+                    } finally {
+                        appLoading.Close();
+                        appLoading.Dispose();
+                        this.Enabled = true;
+                        this.Focus();
+                    }
+                }
+            }
+        }
+
         private void Run193(Register register) {
             if (register != null) {
                 int qnt_bits = register.Bits;
@@ -717,117 +819,16 @@ namespace gerenciamento_memoria {
         }
 
         private void Run194(Register register) {
-            if (register != null && !isAddingRegister) {
+            if (register != null) {
                 Console.WriteLine($"Comando 194:: {register.Name} || {register.Bits}");
                 int address = register.Address;
-                WriteCmdToMicro(193, 3, (byte)(address % 256), (byte)(address >> 8));
-            }
-        }
-
-        private async void btnAddIdx_Click(object sender, EventArgs e) {
-            // TODO
-            /*
-            using (AppCreateIndex registersDialog = new AppCreateIndex()) {
-                if (registersDialog.ShowDialog() == DialogResult.OK) {
-                    bool canAddRegister = true;
-                    List<Register> failure_registers = new List<Register>();
-
-                    // Instancia a janela de carregamento
-                    FormAguarde aguardeDialog = new FormAguarde();
-                    // Abre centralizado em relação ao formulário principal (this)
-                    aguardeDialog.Show(this);
-                    // Desativa a tela principal temporariamente para o usuário não clicar em nada atrás
-                    this.Enabled = false;
-
-                    try {
-                        foreach (var register in registersDialog.selected_registers) {
-                            if (canAddRegister) {
-                                // Atualiza a janelinha informando o progresso atual
-                                aguardeDialog.AtualizarTexto($"Alocando: {register.Name}...");
-
-                                isAddingRegister = true;
-                                successRegister = true;
-
-                                if (register.Bits > 8) {
-                                    Run194(register);
-                                } else {
-                                    Run193(register);
-                                }
-
-                                while (isAddingRegister) {
-                                    await Task.Delay(100);
-                                }
-
-                                if (!successRegister) {
-                                    canAddRegister = false;
-                                    failure_registers.Add(register);
-                                }
-                            } else {
-                                failure_registers.Add(register);
-                            }
-                        }
-                    } finally {
-                        // O bloco finally garante que, mesmo se o código der erro, 
-                        // a janelinha fecha e o seu programa principal volta a funcionar
-                        aguardeDialog.Close();
-                        aguardeDialog.Dispose();
-                        this.Enabled = true; // Reativa a janela principal
-                        this.Focus();
-                    }
-
-                    // EXIBIÇÃO DOS RESULTADOS (Agora com a tela limpa)
-                    if (failure_registers.Count > 0) {
-                        string nomesFalhas = string.Join("\n- ", failure_registers.Select(r => r.Name));
-
-                        MessageBox.Show(
-                            $"Falha na alocação de memória no microcontrolador!\n\n" +
-                            $"Os seguintes registradores NÃO foram alocados:\n- {nomesFalhas}",
-                            "Erro de Alocação",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Error
-                        );
-                    } else {
-                        MessageBox.Show(
-                            "Todos os registradores foram alocados com sucesso no microcontrolador!",
-                            "Sucesso",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Information
-                        );
-                    }
-                }
-            }
-            */
-        }
-
-
-        private void btnAddEnd_Click(object sender, EventArgs e) {
-            using (AppCreateIndex registersDialog = new AppCreateIndex(true)) {
-                if (registersDialog.ShowDialog() == DialogResult.OK) {
-                    Register register = registersDialog.selected_registers[0];
-                    Run193(register);
-                }
+                WriteCmdToMicro(194, 2, (byte)(address % 256), (byte)(address >> 8));
             }
         }
 
         /* ====================================  */
-        /* Verificação se texto está poluído     */
+        /* Synch operation                       */
         /* ====================================  */
-        public bool VerifyTrashInStr(string text, double maxDumpPercent = 0.40) {
-            if (string.IsNullOrEmpty(text)) return false;
-            int validChar = 0;
-            int dumpChar = 0;
-            foreach (char c in text) {
-                if (c > 127 || (c < 32 && c != '\n' && c != '\r')) {
-                    dumpChar++;
-                } else if (!char.IsWhiteSpace(c)) {
-                    validChar++;
-                }
-            }
-            if (validChar + dumpChar == 0) return false;
-            double propDump = (double)dumpChar / (validChar + dumpChar);
-            return propDump > maxDumpPercent;
-        }
-
         private async void btnSynch_Click(object sender, EventArgs e) {
             if (isSynch) return;
 
@@ -854,6 +855,25 @@ namespace gerenciamento_memoria {
         }
 
         /* ====================================  */
+        /* Verifies if has trash in str          */
+        /* ====================================  */
+        public bool VerifyTrashInStr(string text, double maxDumpPercent = 0.40) {
+            if (string.IsNullOrEmpty(text)) return false;
+            int validChar = 0;
+            int dumpChar = 0;
+            foreach (char c in text) {
+                if (c > 127 || (c < 32 && c != '\n' && c != '\r')) {
+                    dumpChar++;
+                } else if (!char.IsWhiteSpace(c)) {
+                    validChar++;
+                }
+            }
+            if (validChar + dumpChar == 0) return false;
+            double propDump = (double)dumpChar / (validChar + dumpChar);
+            return propDump > maxDumpPercent;
+        }
+
+        /* ====================================  */
         /* Resize actions                        */
         /* ====================================  */
 
@@ -863,5 +883,6 @@ namespace gerenciamento_memoria {
                 colIndexes.HeaderText = this.Width < 1050 ? "Idx" : "Índices";
             }
         }
+
     }
 }

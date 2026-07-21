@@ -94,28 +94,28 @@
     <Compile Include="classes\Microcontroller.cs" />
     <Compile Include="classes\Module.cs" />
     <Compile Include="classes\Register.cs" />
-    <Compile Include="AppCreateIndex.cs">
+    <Compile Include="AppRegisters.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="AppCreateIndex.Designer.cs">
-      <DependentUpon>AppCreateIndex.cs</DependentUpon>
+    <Compile Include="AppRegisters.Designer.cs">
+      <DependentUpon>AppRegisters.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormAguarde.cs">
+    <Compile Include="AppLoading.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormAguarde.Designer.cs">
-      <DependentUpon>FormAguarde.cs</DependentUpon>
+    <Compile Include="AppLoading.Designer.cs">
+      <DependentUpon>AppLoading.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="App.resx">
       <DependentUpon>App.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="AppCreateIndex.resx">
-      <DependentUpon>AppCreateIndex.cs</DependentUpon>
+    <EmbeddedResource Include="AppRegisters.resx">
+      <DependentUpon>AppRegisters.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormAguarde.resx">
-      <DependentUpon>FormAguarde.cs</DependentUpon>
+    <EmbeddedResource Include="AppLoading.resx">
+      <DependentUpon>AppLoading.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

@@ -1,5 +1,5 @@
 ﻿namespace gerenciamento_memoria {
-    partial class AppCreateIndex {
+    partial class AppRegisters {
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -23,10 +23,10 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AppCreateIndex));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AppRegisters));
             this.panelManualCMD = new System.Windows.Forms.Panel();
-            this.textboxBytes = new System.Windows.Forms.TextBox();
-            this.labelBytes = new System.Windows.Forms.Label();
+            this.radbtn16bits = new System.Windows.Forms.RadioButton();
+            this.radbtn8bits = new System.Windows.Forms.RadioButton();
             this.btnAddAddress = new System.Windows.Forms.Button();
             this.labelTitleAddress = new System.Windows.Forms.Label();
             this.textboxAddress = new System.Windows.Forms.TextBox();
@@ -45,6 +45,8 @@
             this.btnConfirm = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.panelMain = new System.Windows.Forms.Panel();
+            this.labelBytes = new System.Windows.Forms.Label();
+            this.textboxBytes = new System.Windows.Forms.TextBox();
             this.panelManualCMD.SuspendLayout();
             this.panelEdition.SuspendLayout();
             this.panelMain.SuspendLayout();
@@ -56,39 +58,44 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panelManualCMD.Controls.Add(this.textboxBytes);
             this.panelManualCMD.Controls.Add(this.labelBytes);
+            this.panelManualCMD.Controls.Add(this.radbtn16bits);
+            this.panelManualCMD.Controls.Add(this.radbtn8bits);
             this.panelManualCMD.Controls.Add(this.btnAddAddress);
             this.panelManualCMD.Controls.Add(this.labelTitleAddress);
             this.panelManualCMD.Controls.Add(this.textboxAddress);
             this.panelManualCMD.Controls.Add(this.labelAddress);
-            this.panelManualCMD.Location = new System.Drawing.Point(12, 12);
+            this.panelManualCMD.Location = new System.Drawing.Point(12, 3);
             this.panelManualCMD.Name = "panelManualCMD";
-            this.panelManualCMD.Size = new System.Drawing.Size(460, 64);
+            this.panelManualCMD.Size = new System.Drawing.Size(460, 73);
             this.panelManualCMD.TabIndex = 0;
             // 
-            // textboxBytes
+            // radbtn16bits
             // 
-            this.textboxBytes.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textboxBytes.Location = new System.Drawing.Point(297, 26);
-            this.textboxBytes.Name = "textboxBytes";
-            this.textboxBytes.Size = new System.Drawing.Size(88, 21);
-            this.textboxBytes.TabIndex = 5;
-            this.textboxBytes.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textboxManual_KeyDown);
+            this.radbtn16bits.AutoSize = true;
+            this.radbtn16bits.Location = new System.Drawing.Point(319, 42);
+            this.radbtn16bits.Name = "radbtn16bits";
+            this.radbtn16bits.Size = new System.Drawing.Size(57, 17);
+            this.radbtn16bits.TabIndex = 5;
+            this.radbtn16bits.Text = "16 Bits";
+            this.radbtn16bits.UseVisualStyleBackColor = true;
             // 
-            // labelBytes
+            // radbtn8bits
             // 
-            this.labelBytes.AutoSize = true;
-            this.labelBytes.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelBytes.Location = new System.Drawing.Point(232, 29);
-            this.labelBytes.Name = "labelBytes";
-            this.labelBytes.Size = new System.Drawing.Size(63, 15);
-            this.labelBytes.TabIndex = 4;
-            this.labelBytes.Text = "Qnt. bytes:";
+            this.radbtn8bits.AutoSize = true;
+            this.radbtn8bits.Checked = true;
+            this.radbtn8bits.Location = new System.Drawing.Point(259, 42);
+            this.radbtn8bits.Name = "radbtn8bits";
+            this.radbtn8bits.Size = new System.Drawing.Size(51, 17);
+            this.radbtn8bits.TabIndex = 4;
+            this.radbtn8bits.TabStop = true;
+            this.radbtn8bits.Text = "8 Bits";
+            this.radbtn8bits.UseVisualStyleBackColor = true;
             // 
             // btnAddAddress
             // 
-            this.btnAddAddress.Location = new System.Drawing.Point(391, 24);
+            this.btnAddAddress.Location = new System.Drawing.Point(391, 39);
             this.btnAddAddress.Name = "btnAddAddress";
-            this.btnAddAddress.Size = new System.Drawing.Size(69, 25);
+            this.btnAddAddress.Size = new System.Drawing.Size(69, 23);
             this.btnAddAddress.TabIndex = 3;
             this.btnAddAddress.Text = "Adicionar";
             this.btnAddAddress.UseVisualStyleBackColor = true;
@@ -98,7 +105,7 @@
             // 
             this.labelTitleAddress.AutoSize = true;
             this.labelTitleAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelTitleAddress.Location = new System.Drawing.Point(3, 3);
+            this.labelTitleAddress.Location = new System.Drawing.Point(6, 2);
             this.labelTitleAddress.Name = "labelTitleAddress";
             this.labelTitleAddress.Size = new System.Drawing.Size(121, 16);
             this.labelTitleAddress.TabIndex = 2;
@@ -107,9 +114,9 @@
             // textboxAddress
             // 
             this.textboxAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textboxAddress.Location = new System.Drawing.Point(69, 26);
+            this.textboxAddress.Location = new System.Drawing.Point(9, 40);
             this.textboxAddress.Name = "textboxAddress";
-            this.textboxAddress.Size = new System.Drawing.Size(156, 21);
+            this.textboxAddress.Size = new System.Drawing.Size(197, 21);
             this.textboxAddress.TabIndex = 1;
             this.textboxAddress.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textboxManual_KeyDown);
             // 
@@ -117,11 +124,11 @@
             // 
             this.labelAddress.AutoSize = true;
             this.labelAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelAddress.Location = new System.Drawing.Point(3, 29);
+            this.labelAddress.Location = new System.Drawing.Point(6, 22);
             this.labelAddress.Name = "labelAddress";
-            this.labelAddress.Size = new System.Drawing.Size(63, 15);
+            this.labelAddress.Size = new System.Drawing.Size(94, 15);
             this.labelAddress.TabIndex = 0;
-            this.labelAddress.Text = "Endereço:";
+            this.labelAddress.Text = "Endereço (hex):";
             // 
             // treeviewRegisters
             // 
@@ -265,7 +272,28 @@
             this.panelMain.Size = new System.Drawing.Size(460, 405);
             this.panelMain.TabIndex = 11;
             // 
-            // AppCreateIndex
+            // labelBytes
+            // 
+            this.labelBytes.AutoSize = true;
+            this.labelBytes.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelBytes.Location = new System.Drawing.Point(227, 22);
+            this.labelBytes.Name = "labelBytes";
+            this.labelBytes.Size = new System.Drawing.Size(81, 15);
+            this.labelBytes.TabIndex = 6;
+            this.labelBytes.Text = "Qnt. de Bytes:";
+            this.labelBytes.Visible = false;
+            // 
+            // textboxBytes
+            // 
+            this.textboxBytes.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textboxBytes.Location = new System.Drawing.Point(230, 40);
+            this.textboxBytes.Name = "textboxBytes";
+            this.textboxBytes.Size = new System.Drawing.Size(153, 21);
+            this.textboxBytes.TabIndex = 7;
+            this.textboxBytes.Visible = false;
+            this.textboxBytes.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textboxManual_KeyDown);
+            // 
+            // AppRegisters
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -276,7 +304,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "AppCreateIndex";
+            this.Name = "AppRegisters";
             this.Text = "Adicionar Endereços";
             this.panelManualCMD.ResumeLayout(false);
             this.panelManualCMD.PerformLayout();
@@ -308,8 +336,10 @@
         private System.Windows.Forms.Label labelPropType;
         private System.Windows.Forms.Button btnConfirm;
         private System.Windows.Forms.Button btnCancel;
+        private System.Windows.Forms.Panel panelMain;
+        private System.Windows.Forms.RadioButton radbtn8bits;
+        private System.Windows.Forms.RadioButton radbtn16bits;
         private System.Windows.Forms.TextBox textboxBytes;
         private System.Windows.Forms.Label labelBytes;
-        private System.Windows.Forms.Panel panelMain;
     }
 }

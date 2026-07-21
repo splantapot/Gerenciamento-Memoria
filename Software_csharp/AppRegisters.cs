@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace gerenciamento_memoria {
-    public partial class AppCreateIndex : Form {
+    public partial class AppRegisters : Form {
 
         // Default constructor for creation nodes
         private const string NEW_REGISTER_NODE_TEXT = "Adicionar Registrador";
@@ -29,23 +29,22 @@ namespace gerenciamento_memoria {
         private const string CUSTOM_ADDRESS = "Personalizado";
 
         private const bool ENABLE_EDITING = false;
-        private object edit_object = null;
-        public bool isSimpleCommand;
+        public bool isManualMode;
 
         // Control variables
         private readonly List<Microcontroller> microcontrollers = new List<Microcontroller>();
         public readonly List<Register> selected_registers = new List<Register>();
 
-        public AppCreateIndex(bool only_manual = false) {
+        public AppRegisters(bool is_manual_mode = false) {
             InitializeComponent();
-            isSimpleCommand = only_manual;
+            isManualMode = is_manual_mode;
+            ToggleMode();
 
-            if (isSimpleCommand) {
+            if (isManualMode) {
                 panelMain.Visible = false;
                 this.Text = "Adicionar N Bytes a partir de Endereço";
                 this.Size = new Size(530, 200);
             } else {
-
                 string jsonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "registers.json");
 
                 if (File.Exists(jsonPath)) {
@@ -76,6 +75,13 @@ namespace gerenciamento_memoria {
             textboxProp1.Enabled = ENABLE_EDITING;
             textboxProp2.Enabled = ENABLE_EDITING;
             btnEdit.Visible = ENABLE_EDITING;
+        }
+
+        private void ToggleMode() {
+            radbtn8bits.Checked = true;
+            radbtn8bits.Enabled = radbtn16bits.Enabled = !isManualMode;
+            radbtn8bits.Visible = radbtn16bits.Visible = !isManualMode;
+            labelBytes.Visible = textboxBytes.Visible = textboxBytes.Enabled = isManualMode;
         }
 
         /* ====================================  */
@@ -150,16 +156,16 @@ namespace gerenciamento_memoria {
                         treeviewRegisters.SelectedNode = moduleNode;
                     }
 
-                    if (ENABLE_EDITING) {
-                        TreeNode newRegisterNode = moduleNode.Nodes.Add(NEW_REGISTER_NODE_TEXT);
-                        newRegisterNode.Tag = $"{module.Code}:{NEW_REGISTER_NODE_TAG}";
-                    }
+                    //if (ENABLE_EDITING) {
+                    //    TreeNode newRegisterNode = moduleNode.Nodes.Add(NEW_REGISTER_NODE_TEXT);
+                    //    newRegisterNode.Tag = $"{module.Code}:{NEW_REGISTER_NODE_TAG}";
+                    //}
                 }
 
-                if (ENABLE_EDITING) {
-                    TreeNode newModuleNode = microNode.Nodes.Add(NEW_MODULE_NODE_TEXT);
-                    newModuleNode.Tag = $"{microcontroller.Name}:{NEW_MODULE_NODE_TAG}";
-                }
+                //if (ENABLE_EDITING) {
+                //    TreeNode newModuleNode = microNode.Nodes.Add(NEW_MODULE_NODE_TEXT);
+                //    newModuleNode.Tag = $"{microcontroller.Name}:{NEW_MODULE_NODE_TAG}";
+                //}
             }
 
             // Renderer for Selected treeview. ------------------------
@@ -397,55 +403,67 @@ namespace gerenciamento_memoria {
         private void btnAddAddress_Click(object sender, EventArgs e) {
 
             if (string.IsNullOrEmpty(textboxAddress.Text)) {
-                MessageBox.Show("Insira um endereço.");
+                MessageBox.Show("Insira um endereço hexadecimal.");
                 return;
             }
 
-            if (string.IsNullOrEmpty(textboxBytes.Text)) {
-                MessageBox.Show("Insira a quantidade de bytes.");
-                return;
-            }
+            // ADDRESS VALIDATION --------------------------------------
 
             string addressInput = textboxAddress.Text.Trim();
-            string bytesInput = textboxBytes.Text.Trim();
-
             int numericAddress;
-            int byteLength;
-            int bitLength;
+
+            // Removes "0x" prefix
+            string cleanAddressInput = addressInput.Trim();
+            if (cleanAddressInput.StartsWith("0x", StringComparison.OrdinalIgnoreCase)) {
+                cleanAddressInput = cleanAddressInput.Substring(2);
+            }
 
             try {
-                if (addressInput.StartsWith("0x", StringComparison.OrdinalIgnoreCase)) {
-                    numericAddress = Convert.ToInt32(addressInput.Substring(2), 16);
-                } else if (System.Text.RegularExpressions.Regex.IsMatch(addressInput, @"^[0-9a-fA-F]+$")) {
-                    numericAddress = Convert.ToInt32(addressInput, 16);
-                } else {
-                    numericAddress = Convert.ToInt32(addressInput, 10);
-                }
+                // Try to convert strictly as Hexadecimal (base 16)
+                numericAddress = Convert.ToInt32(cleanAddressInput, 16);
             } catch (FormatException) {
-                MessageBox.Show("Formato de endereço inválido. Verifique o valor digitado (Hex).", "Erro de Formato", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(
+                    "Endereço inválido. Insira um valor numérico hexadecimal válido (ex: 1A, 0xFF, 1000).",
+                    "Erro de Formato Hexadecimal",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
                 return;
             } catch (OverflowException) {
-                MessageBox.Show("O valor do endereço é muito grande (causou overflow em 32 bits).", "Erro de Estouro (Overflow)", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(
+                    "O endereço informado ultrapassa o limite permitido para 32 bits.",
+                    "Erro de Estouro (Overflow)",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
                 return;
             }
 
-            try {
-                byteLength = Convert.ToInt32(bytesInput, 10);
-                if (byteLength <= 0 || byteLength > 8) {
-                    MessageBox.Show("Por favor, insira uma quantidade de bytes válida (1 a 8).", "Bytes Inválidos", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            // BYTES VALIDATION -------------------------------------------
+
+            int bytesQnt = radbtn8bits.Checked ? 1 /* 8 bits */ : 2 /* 16 bits */;
+            if (isManualMode) {
+                if (!int.TryParse(textboxBytes.Text.Trim(), out int parsedBytes) || parsedBytes <= 0) {
+                    MessageBox.Show(
+                        "Por favor, insira um número inteiro positivo maior que zero para a quantidade de bytes.",
+                        "Valor Inválido",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning
+                    );
                     return;
                 }
-                bitLength = byteLength * 8;
-            } catch {
-                MessageBox.Show("A quantidade de bytes deve ser um número decimal válido.", "Erro de Entrada", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+
+                bytesQnt = parsedBytes;
+                
             }
 
-            Register newReg = new Register(CUSTOM_ADDRESS, numericAddress, bitLength);
+            int bitsQnt = bytesQnt * 8;
+
+            Register newReg = new Register(CUSTOM_ADDRESS, numericAddress, bitsQnt);
             selected_registers.Add(newReg);
 
-            if (isSimpleCommand) {
-                string mensagem = $"Confirmar alocação de {byteLength} bytes a partir do endereço (0x{numericAddress:X})?";
+            if (isManualMode) {
+                string mensagem = $"Confirmar alocação de {bytesQnt} bytes a partir do endereço (0x{numericAddress:X})?";
                 DialogResult resposta = MessageBox.Show(mensagem, "Confirmação", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                 if (resposta == DialogResult.Yes) {
@@ -456,7 +474,6 @@ namespace gerenciamento_memoria {
                 }
             } else {
                 textboxAddress.Clear();
-                textboxBytes.Clear();
                 RenderTreeView();
             }
         }
@@ -475,7 +492,7 @@ namespace gerenciamento_memoria {
             if (!isEditable) return;
 
             panelEdition.Visible = true;
-            edit_object = node.Tag;
+            // edit_object = node.Tag;
 
             if (IsRegisterNode(node) && node.Tag is Register editRegister) {
                 labelPropType.Text = "Registrador";
