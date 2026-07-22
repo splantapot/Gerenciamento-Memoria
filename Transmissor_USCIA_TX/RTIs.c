@@ -79,9 +79,6 @@ __interrupt void USCI0RX_ISR(void){
 		if ( buffer_rx[1] == (ordem - 2) ){//recebeu todos os parametros?  buffer_rx[0]=>CMD e buffer_rx[1]=> a QTD de argumentos //decodificar o comando que está no buffer
 			#define end16   ((unsigned int)(buffer_rx[2 + 1] << 8) + (unsigned int)buffer_rx[2])
 			switch(buffer_rx[0]){//qual comando? e faça o que tem que ser feito para o comando
-			case 251://comando write no "indice" da tabela do C#
-				write_ind(buffer_rx[2], buffer_rx[2 + 1]);//*(vetor_ptr[indice]) = valor;
-				break;
 			case 190://BITSET, //BITCLEAR, BITINV respectivamente
 			case 191:
 			case 192://comandos 190 a 192 de TRÊS argumentos://indice (baixo), indice_alto, valor
@@ -92,9 +89,18 @@ __interrupt void USCI0RX_ISR(void){
 			case 193: aloc_addr((MEM) end16,  buffer_rx[2 + 2]); break;
 			case 194: aloc_reg((REG16) end16); break;
 			case 195: obter_inds(0); break;
+
 			case 247: __bic_SR_register_on_exit(LPM0_bits); break;//despausa a main //RUN
 			case 246: __bis_SR_register_on_exit(LPM0_bits); break;//pausar //pausa a main o
 			case 245: WDTCTL = 0; 							break;//Resetar por PUC
+
+            case 251: //comando write no "indice" da tabela do C#
+                write_ind(buffer_rx[2], buffer_rx[2 + 1]);  //*(vetor_ptr[indice]) = valor;
+                break;
+
+            // Comando write para registrador
+            case 252: write_reg(buffer_rx[2], buffer_rx[2 + 1], buffer_rx[2 + 2]); break;
+
 			}//switch buffer_rx[0]
 
 			ordem = 255; //feito? então retorne 2, mas colocando o estado em zero

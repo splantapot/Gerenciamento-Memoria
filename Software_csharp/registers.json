@@ -47,7 +47,7 @@
               "bits": 16
             }
           ]
-        }
+        },
         {
           "name": "Some Timer",
           "code": "stm",

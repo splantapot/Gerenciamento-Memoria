@@ -46,6 +46,8 @@
             this.textBoxTX = new System.Windows.Forms.TextBox();
             this.btnWriteMSP = new System.Windows.Forms.Button();
             this.panelButtons = new System.Windows.Forms.Panel();
+            this.btnDownNames = new System.Windows.Forms.Button();
+            this.btnUpNames = new System.Windows.Forms.Button();
             this.btnRefreshPorts = new System.Windows.Forms.Button();
             this.btnAddAddr = new System.Windows.Forms.Button();
             this.btnAddRegisters = new System.Windows.Forms.Button();
@@ -81,8 +83,6 @@
             this.btnSendRX = new System.Windows.Forms.Button();
             this.textboxRX = new System.Windows.Forms.TextBox();
             this.labelRX = new System.Windows.Forms.Label();
-            this.btnUpNames = new System.Windows.Forms.Button();
-            this.btnDownNames = new System.Windows.Forms.Button();
             this.panelDatagrid.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitTop)).BeginInit();
             this.splitTop.Panel1.SuspendLayout();
@@ -302,7 +302,7 @@
             // btnClearTX
             // 
             this.btnClearTX.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClearTX.Location = new System.Drawing.Point(277, 6);
+            this.btnClearTX.Location = new System.Drawing.Point(275, 6);
             this.btnClearTX.Name = "btnClearTX";
             this.btnClearTX.Size = new System.Drawing.Size(80, 24);
             this.btnClearTX.TabIndex = 15;
@@ -331,7 +331,7 @@
             this.textBoxTX.Name = "textBoxTX";
             this.textBoxTX.ReadOnly = true;
             this.textBoxTX.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxTX.Size = new System.Drawing.Size(349, 169);
+            this.textBoxTX.Size = new System.Drawing.Size(347, 169);
             this.textBoxTX.TabIndex = 1;
             // 
             // btnWriteMSP
@@ -363,6 +363,26 @@
             this.panelButtons.Name = "panelButtons";
             this.panelButtons.Size = new System.Drawing.Size(784, 70);
             this.panelButtons.TabIndex = 8;
+            // 
+            // btnDownNames
+            // 
+            this.btnDownNames.Location = new System.Drawing.Point(322, 37);
+            this.btnDownNames.Name = "btnDownNames";
+            this.btnDownNames.Size = new System.Drawing.Size(90, 30);
+            this.btnDownNames.TabIndex = 22;
+            this.btnDownNames.Text = "Descer Nomes";
+            this.btnDownNames.UseVisualStyleBackColor = true;
+            this.btnDownNames.Click += new System.EventHandler(this.btnDownNames_Click);
+            // 
+            // btnUpNames
+            // 
+            this.btnUpNames.Location = new System.Drawing.Point(322, 3);
+            this.btnUpNames.Name = "btnUpNames";
+            this.btnUpNames.Size = new System.Drawing.Size(90, 30);
+            this.btnUpNames.TabIndex = 21;
+            this.btnUpNames.Text = "Subir Nomes";
+            this.btnUpNames.UseVisualStyleBackColor = true;
+            this.btnUpNames.Click += new System.EventHandler(this.btnUpNames_Click);
             // 
             // btnRefreshPorts
             // 
@@ -546,7 +566,7 @@
             this.tabctrlCMD.Location = new System.Drawing.Point(7, 84);
             this.tabctrlCMD.Name = "tabctrlCMD";
             this.tabctrlCMD.SelectedIndex = 0;
-            this.tabctrlCMD.Size = new System.Drawing.Size(350, 110);
+            this.tabctrlCMD.Size = new System.Drawing.Size(348, 110);
             this.tabctrlCMD.TabIndex = 17;
             // 
             // tabPage1
@@ -559,7 +579,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(342, 84);
+            this.tabPage1.Size = new System.Drawing.Size(340, 84);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "1";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -616,7 +636,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(342, 84);
+            this.tabPage2.Size = new System.Drawing.Size(340, 84);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "2";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -624,7 +644,7 @@
             // btnBITSET
             // 
             this.btnBITSET.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBITSET.Location = new System.Drawing.Point(154, 15);
+            this.btnBITSET.Location = new System.Drawing.Point(152, 15);
             this.btnBITSET.Name = "btnBITSET";
             this.btnBITSET.Size = new System.Drawing.Size(60, 52);
             this.btnBITSET.TabIndex = 20;
@@ -639,13 +659,13 @@
             this.textboxCMDAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.textboxCMDAddress.Location = new System.Drawing.Point(39, 15);
             this.textboxCMDAddress.Name = "textboxCMDAddress";
-            this.textboxCMDAddress.Size = new System.Drawing.Size(109, 23);
+            this.textboxCMDAddress.Size = new System.Drawing.Size(107, 23);
             this.textboxCMDAddress.TabIndex = 15;
             // 
             // btnBITINV
             // 
             this.btnBITINV.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBITINV.Location = new System.Drawing.Point(279, 15);
+            this.btnBITINV.Location = new System.Drawing.Point(277, 15);
             this.btnBITINV.Name = "btnBITINV";
             this.btnBITINV.Size = new System.Drawing.Size(60, 52);
             this.btnBITINV.TabIndex = 21;
@@ -680,13 +700,13 @@
             this.textboxCMDBit.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.textboxCMDBit.Location = new System.Drawing.Point(39, 44);
             this.textboxCMDBit.Name = "textboxCMDBit";
-            this.textboxCMDBit.Size = new System.Drawing.Size(109, 23);
+            this.textboxCMDBit.Size = new System.Drawing.Size(107, 23);
             this.textboxCMDBit.TabIndex = 18;
             // 
             // btnBITCLR
             // 
             this.btnBITCLR.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBITCLR.Location = new System.Drawing.Point(216, 15);
+            this.btnBITCLR.Location = new System.Drawing.Point(214, 15);
             this.btnBITCLR.Name = "btnBITCLR";
             this.btnBITCLR.Size = new System.Drawing.Size(60, 52);
             this.btnBITCLR.TabIndex = 19;
@@ -697,7 +717,7 @@
             // btnClearCMD
             // 
             this.btnClearCMD.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClearCMD.Location = new System.Drawing.Point(277, 196);
+            this.btnClearCMD.Location = new System.Drawing.Point(275, 196);
             this.btnClearCMD.Name = "btnClearCMD";
             this.btnClearCMD.Size = new System.Drawing.Size(80, 24);
             this.btnClearCMD.TabIndex = 16;
@@ -716,7 +736,7 @@
             this.textboxCMDLog.Name = "textboxCMDLog";
             this.textboxCMDLog.ReadOnly = true;
             this.textboxCMDLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textboxCMDLog.Size = new System.Drawing.Size(350, 49);
+            this.textboxCMDLog.Size = new System.Drawing.Size(348, 49);
             this.textboxCMDLog.TabIndex = 1;
             // 
             // labelCMDReg
@@ -742,7 +762,7 @@
             // btnSendRX
             // 
             this.btnSendRX.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSendRX.Location = new System.Drawing.Point(277, 35);
+            this.btnSendRX.Location = new System.Drawing.Point(275, 35);
             this.btnSendRX.Name = "btnSendRX";
             this.btnSendRX.Size = new System.Drawing.Size(80, 24);
             this.btnSendRX.TabIndex = 5;
@@ -757,7 +777,7 @@
             this.textboxRX.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.textboxRX.Location = new System.Drawing.Point(7, 36);
             this.textboxRX.Name = "textboxRX";
-            this.textboxRX.Size = new System.Drawing.Size(264, 23);
+            this.textboxRX.Size = new System.Drawing.Size(262, 23);
             this.textboxRX.TabIndex = 1;
             this.textboxRX.KeyDown += new System.Windows.Forms.KeyEventHandler(this._cmdBox_KeyDown);
             // 
@@ -770,26 +790,6 @@
             this.labelRX.Size = new System.Drawing.Size(25, 16);
             this.labelRX.TabIndex = 0;
             this.labelRX.Text = "RX";
-            // 
-            // btnUpNames
-            // 
-            this.btnUpNames.Location = new System.Drawing.Point(322, 3);
-            this.btnUpNames.Name = "btnUpNames";
-            this.btnUpNames.Size = new System.Drawing.Size(90, 30);
-            this.btnUpNames.TabIndex = 21;
-            this.btnUpNames.Text = "Subir Nomes";
-            this.btnUpNames.UseVisualStyleBackColor = true;
-            this.btnUpNames.Click += new System.EventHandler(this.btnUpNames_Click);
-            // 
-            // btnDownNames
-            // 
-            this.btnDownNames.Location = new System.Drawing.Point(322, 37);
-            this.btnDownNames.Name = "btnDownNames";
-            this.btnDownNames.Size = new System.Drawing.Size(90, 30);
-            this.btnDownNames.TabIndex = 22;
-            this.btnDownNames.Text = "Descer Nomes";
-            this.btnDownNames.UseVisualStyleBackColor = true;
-            this.btnDownNames.Click += new System.EventHandler(this.btnDownNames_Click);
             // 
             // App
             // 

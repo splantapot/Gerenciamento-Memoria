@@ -3,7 +3,10 @@
 #ifndef GERENCIADOR_MEMORIA_H_
 #define GERENCIADOR_MEMORIA_H_
 #include <stdlib.h>
+
 #define byte unsigned char
+#define uint16 unsigned int
+
 #define MEM volatile byte*
 typedef volatile unsigned int* REG16;
 extern char* msg;//DEON apagar depois
@@ -22,6 +25,7 @@ byte aloc_reg(REG16 p);
 byte aloc_addr(MEM p, byte tam);
 void obter_inds(byte bytes_to_add);  // Obtém confirmação de índices
 void write_ind(byte indice, byte valor);
+void write_reg(byte indice, byte valorL, byte valorH);
 
 #define clear_e_cont_txie e = 0; cont = 0; IE2 &= ~UCA0TXIE;
 #endif /* GERENCIADOR_MEMORIA_H_ */

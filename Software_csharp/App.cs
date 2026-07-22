@@ -32,7 +32,10 @@ namespace gerenciamento_memoria {
         private string str_buffer = "";
         private string str_ready = "";
 
-        int qntRaws = 0;
+        int qntRaws8B = 0;
+        int qntRaws16B = 0;
+        private int qntRaws => (qntRaws16B*2) + qntRaws8B;
+
         private int[] raw_buffer;
         private int[] raw_ready;
         private int raw_counter = 0;
@@ -43,15 +46,16 @@ namespace gerenciamento_memoria {
         private bool isAddingRegister = false;
         private bool successRegister = false;
 
-        public void InitRawBuffer(int size) {
-            qntRaws = size;
+        public void InitRawBuffer(int qnt_raw8bits, int qnt_raw16bits) {
+            qntRaws8B = qnt_raw8bits;
+            qntRaws16B = qnt_raw16bits;
             raw_buffer = new int[qntRaws];
             raw_ready = new int[qntRaws];
         }
 
         public App() {
             InitializeComponent();      // APP Init
-            InitRawBuffer(qntRaws);
+            InitRawBuffer(qntRaws8B, qntRaws16B);
             com = new Communication();  // Instance Communication Obj
             RenderPortBox();            // Init setting
             RenderRadioButton();
@@ -235,11 +239,12 @@ namespace gerenciamento_memoria {
             }
             str_ready = str_buffer;
 
-            var match = System.Text.RegularExpressions.Regex.Match(str_ready, @"ao(\d{3})\n");
+            var match = System.Text.RegularExpressions.Regex.Match(str_ready, @"ao(\d{3})r(\d{3})\n");
             if (match.Success) {
-                int newSize = Convert.ToInt32(match.Groups[1].Value, 10);
+                int new8BitsSize = Convert.ToInt32(match.Groups[1].Value, 10);
+                int new16BitsSize = Convert.ToInt32(match.Groups[2].Value, 10);
                 //Console.WriteLine(newSize);
-                InitRawBuffer(newSize);
+                InitRawBuffer(new8BitsSize, new16BitsSize);
                 isSynch = false;    // Ok, done synch
                 isAddingRegister = false;
             } else if (str_ready.Contains("Error_aloc_memoria")) {
@@ -294,9 +299,17 @@ namespace gerenciamento_memoria {
             UpdateColumnName();
 
             for (int row = 0; row < dataGrid.RowCount; row++) {
-                // ix rhex rdec whex wdec
+                // ix name rhex rdec whex wdec
                 int ix = _getRowIndex(row);
                 try {
+
+                    if (ix >= qntRaws8B && ix < qntRaws) {
+                        dataGrid.Rows[row].Cells[0].Style.Font = new Font(dataGrid.Font, FontStyle.Italic | FontStyle.Bold);
+                        dataGrid.Rows[row].Cells[0].Style.ForeColor = Color.DimGray; // Dark gray text
+                    } else {
+                        dataGrid.Rows[row].Cells[0].Style.Font = null;
+                        dataGrid.Rows[row].Cells[0].Style.ForeColor = Color.Empty;  // Resets to default color
+                    }
 
                     string new_formatted_value;
                     switch (grid_mode) {
@@ -386,9 +399,31 @@ namespace gerenciamento_memoria {
             byte index = (byte)_getRowIndex(row);
             byte value = (byte)valueResult;
 
-            if (value >= 0 && index >= 0 && index < qntRaws) {
+            if (value >= 0 && index >= 0 && index < qntRaws8B) {
                 // COMMAND 251: Write value in index from array
                 WriteCmdToMicro(251, 2, index, value);
+                _clearRowWrite(row);
+            } else if (value >= 0 && index >= qntRaws8B && index < qntRaws) {
+                // COMMAND 252: Write value in 16-bit register
+
+                int offset16 = index - qntRaws8B;
+                bool isHigh = (offset16 % 2 == 0);
+                byte reg16_index = (byte)(offset16 / 2); // Get like an index
+
+                byte value_H;
+                byte value_L;
+
+                if (isHigh) {
+                    // Low is next byte
+                    value_H = (byte)value;
+                    value_L = (index + 1 < raw_ready.Length) ? (byte)raw_ready[index + 1] : (byte)0;
+                } else {
+                    // High is last byte
+                    value_L = (byte)value;
+                    value_H = (index-1 >= 0) ? (byte)raw_ready[index-1] : (byte)0;
+                }
+
+                WriteCmdToMicro(252, 3, reg16_index, value_L, value_H);
                 _clearRowWrite(row);
             } else {
                 // Paint the line
@@ -567,25 +602,34 @@ namespace gerenciamento_memoria {
         }
 
         private int _getRowValue(int row) {
-
             string textHex = dataGrid.Rows[row].Cells[4].Value?.ToString()?.Trim() ?? "";
             string textDec = dataGrid.Rows[row].Cells[5].Value?.ToString()?.Trim() ?? "";
 
             if (string.IsNullOrWhiteSpace(textHex) && string.IsNullOrWhiteSpace(textDec)) {
-                return -2;
+                return -2; // Nenhuma célula de edição preenchida
             }
+
             if (!string.IsNullOrWhiteSpace(textHex)) {
                 try {
-                    if (textHex.Contains('x')) textHex = textHex.Split('x')[1]; // Aceita "0x"
-                    return int.Parse(textHex, System.Globalization.NumberStyles.HexNumber);
+                    // Remove o prefixo "0x" ou "0X" se existir
+                    if (textHex.StartsWith("0x", StringComparison.OrdinalIgnoreCase)) {
+                        textHex = textHex.Substring(2);
+                    }
+
+                    // uint.Parse força o número a ser interpretado estritamente como positivo (0 a 65535/4294967295)
+                    uint valHex = uint.Parse(textHex, System.Globalization.NumberStyles.HexNumber);
+                    return (int)valHex;
                 } catch { }
             }
+
             if (!string.IsNullOrWhiteSpace(textDec)) {
                 try {
-                    return int.Parse(textDec);
+                    int valDec = int.Parse(textDec);
+                    if (valDec >= 0) return valDec; // Só aceita decimais não-negativos
                 } catch { }
             }
-            return -1;
+
+            return -1; // Parse inválido
         }
 
         private int _getHex(string text) {
